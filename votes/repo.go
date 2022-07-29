@@ -2,10 +2,6 @@ package votes
 
 import "sync"
 
-type talkData interface {
-	TalkName() string
-}
-
 type Repository struct {
 	votes  mapStore[Vote]
 	labels mapStore[Label]
@@ -28,6 +24,10 @@ func (r *Repository) Label(l Label) error {
 	return nil
 }
 
+type talkData interface {
+	talkName() string
+}
+
 type mapStore[T talkData] struct {
 	sync.Mutex
 	m map[string][]T
@@ -42,6 +42,6 @@ func makeStore[T talkData]() mapStore[T] {
 func (ms *mapStore[T]) add(item T) {
 	ms.Lock()
 	defer ms.Unlock()
-	key := item.TalkName()
+	key := item.talkName()
 	ms.m[key] = append(ms.m[key], item)
 }
