@@ -7,13 +7,13 @@ import (
 )
 
 command: {
-		for name, value in summary {
-			"\(name)": print: (#prettyPrint & { input: value }).output
-		}
+	for name, value in summary {
+		"\(name)": print: (#prettyPrint & {input: value}).output
+	}
 }
 
 #prettyPrint: {
-	input: _
+	input:  _
 	output: cli.Print & {
 		text: yaml.Marshal(input)
 	}

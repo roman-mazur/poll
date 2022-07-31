@@ -1,7 +1,7 @@
 package defs
 
 #MB: {
-	input: uint
+	input:  uint
 	output: input / 1024 / 1024
 }
 
@@ -12,6 +12,6 @@ summary: {
 	}
 
 	req: {
-		memMB: (#MB & { input: vote.memorySize + label.memorySize }).output
+		memMB: (#MB & {input: vote.memorySize + label.memorySize}).output
 	}
 }
