@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path"
 
 	"cuelang.org/go/cue/errors"
 	"cuelang.org/go/cuego"
@@ -14,6 +15,14 @@ func HTTPHandler(repo *Repository) http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle("/votes", adapt(method("POST", process(repo.Add))))
 	mux.Handle("/labels", adapt(method("POST", process(repo.Label))))
+
+	mux.Handle("/talk-data/", adapt(method("GET", func(r *http.Request) (any, error) {
+		talkId := path.Base(r.URL.Path)
+		if talkId == "" {
+			return nil, &clientError{Msg: "no talk ID"}
+		}
+		return repo.Aggregate(talkId), nil
+	})))
 	return mux
 }
 
@@ -25,6 +34,7 @@ func process[T touch](f func(T) error) handler {
 	return func(r *http.Request) (any, error) {
 		var data T
 		if err := parse(r, &data); err != nil {
+			log.Printf("parse error: %s", err)
 			return nil, err
 		}
 		data.touch()

@@ -1,6 +1,9 @@
 package votes
 
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 type Repository struct {
 	votes  mapStore[Vote]
@@ -24,6 +27,45 @@ func (r *Repository) Label(l Label) error {
 	return nil
 }
 
+func (r *Repository) Aggregate(talkName string) (res Aggregate) {
+	res.TalkName = talkName
+
+	votes := r.votes.get(talkName)
+	res.Votes = make([]voteAgg, len(votes))
+	for i := range votes {
+		v := &res.Votes[i]
+		v.Pos = uint(votes[i].Value)
+		v.Time = votes[i].Timestamp
+	}
+
+	labels := r.labels.get(talkName)
+	res.Labels = make([]labelAgg, len(labels))
+	for i := range labels {
+		l := &res.Labels[i]
+		l.Name = labels[i].Name
+		l.Time = labels[i].Timestamp
+	}
+
+	return
+}
+
+type Aggregate struct {
+	TalkName string     `json:"talk_name"`
+	Votes    []voteAgg  `json:"votes"`
+	Labels   []labelAgg `json:"labels"`
+}
+
+type voteAgg struct {
+	Pos  uint      `json:"pos"`
+	Neg  uint      `json:"neg"`
+	Time time.Time `json:"time"`
+}
+
+type labelAgg struct {
+	Name string    `json:"name"`
+	Time time.Time `json:"time"`
+}
+
 type talkData interface {
 	talkName() string
 }
@@ -44,4 +86,14 @@ func (ms *mapStore[T]) add(item T) {
 	defer ms.Unlock()
 	key := item.talkName()
 	ms.m[key] = append(ms.m[key], item)
+}
+
+func (ms *mapStore[T]) get(key string) []T {
+	ms.Lock()
+	defer ms.Unlock()
+	coll := ms.m[key]
+	// TODO: Process.
+	res := make([]T, len(coll))
+	copy(coll, res)
+	return res
 }
