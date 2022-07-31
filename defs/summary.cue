@@ -12,6 +12,6 @@ summary: {
 	}
 
 	req: {
-		mem: (#MB & { input: vote.memorySize + label.memorySize }).output
+		memMB: (#MB & { input: vote.memorySize + label.memorySize }).output
 	}
 }

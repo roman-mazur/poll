@@ -14,10 +14,10 @@ eventDuration: "8h"
 
 vote: #dataModel & {
 	sample: votes.#Vote & {
-		TalkName:  strings.Join(list.Repeat(["x"], 50), "")
-		VoterId:   "b70fc2dc-4562-43f4-809f-153783bcfd41"
-		Timestamp: time.Parse(time.RFC3339, "2022-02-24T03:00:00Z")
-		Value:     10
+		talk_name:  strings.Join(list.Repeat(["x"], 50), "")
+		voter_id:   "b70fc2dc-4562-43f4-809f-153783bcfd41"
+		timestamp: time.Parse(time.RFC3339, "2022-02-24T03:00:00Z")
+		value:     10
 	}
 
 	submitPeriod: "5s"
@@ -26,9 +26,9 @@ vote: #dataModel & {
 
 label: #dataModel & {
 	sample: votes.#Label & {
-		TalkName:  strings.Join(list.Repeat(["x"], 50), "")
-		Timestamp: time.Parse(time.RFC3339, "2022-02-24T03:00:00Z")
-		Name:      strings.Join(list.Repeat(["x"], 50), "")
+		talk_name:  strings.Join(list.Repeat(["x"], 50), "")
+		timestamp: time.Parse(time.RFC3339, "2022-02-24T03:00:00Z")
+		name:      strings.Join(list.Repeat(["x"], 50), "")
 	}
 
 	submitPeriod: "2m"
