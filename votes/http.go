@@ -11,6 +11,7 @@ import (
 	"cuelang.org/go/cuego"
 )
 
+// HTTPHandler provides a REST API handler for the votes data management.
 func HTTPHandler(repo *Repository) http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle("/votes", adapt(method("POST", process(repo.Add))))

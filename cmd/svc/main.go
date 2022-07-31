@@ -1,3 +1,8 @@
+// Command svc can be used to start an HTTP server that exposes REST API for the poll data management.
+// Its implementation is based on the rmazur.io/poll/votes package.
+//
+// Example usage:
+//		./svc --addr=localhost:8080
 package main
 
 import (

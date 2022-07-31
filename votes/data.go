@@ -4,6 +4,8 @@ import (
 	"time"
 )
 
+// Vote represents the perception of a presentation listener at some given time.
+// The Value field keeps the measure of how much the listener agrees or disagrees with the speaker.
 type Vote struct {
 	TalkName  string    `json:"talk_name"`
 	Timestamp time.Time `json:"timestamp"`
@@ -21,6 +23,9 @@ func (v Vote) touch() {
 	v.Timestamp = time.Now()
 }
 
+// Label provides some context of what the presentation is about at some given time.
+// It can be used as a marker pointing to a specific place in the presentation to correlate the presentation content
+// with the votes.
 type Label struct {
 	TalkName  string    `json:"talk_name"`
 	Name      string    `json:"name"`

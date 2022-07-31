@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Repository keeps the collected data about votes and labels.
 type Repository struct {
 	votes  mapStore[Vote]
 	labels mapStore[Label]
@@ -27,6 +28,8 @@ func (r *Repository) Label(l Label) error {
 	return nil
 }
 
+// Aggregate returns the aggregated data for a specific talk that can be used to provide a summary of the poll during
+// the presentation.
 func (r *Repository) Aggregate(talkName string) (res Aggregate) {
 	res.TalkName = talkName
 
