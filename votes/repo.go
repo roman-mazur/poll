@@ -53,7 +53,7 @@ func (r *Repository) Aggregate(talkName string) (res Aggregate) {
 		pos, neg := make(votesSet), make(votesSet)
 		for vi < len(votes) && (li == len(labels)-1 || votes[vi].Timestamp.Before(labels[li+1].Timestamp)) {
 			vid := votes[vi].VoterId
-			if votes[vi].Value == 0 {
+			if votes[vi].Value <= 5 {
 				delete(pos, vid)
 				neg[vid] = struct{}{}
 			} else {

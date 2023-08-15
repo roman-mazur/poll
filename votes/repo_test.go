@@ -16,15 +16,15 @@ func TestRepository_Aggregate(t *testing.T) {
 
 	_ = r.Label(Label{TalkName: talk, Name: "label1", Timestamp: start})
 
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 1, Timestamp: start.Add(time.Second)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u2", Value: 1, Timestamp: start.Add(time.Second * 3 / 2)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 0, Timestamp: start.Add(time.Second * 2)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u3", Value: 1, Timestamp: start.Add(time.Second * 3)})
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 8, Timestamp: start.Add(time.Second)})
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u2", Value: 8, Timestamp: start.Add(time.Second * 3 / 2)})
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 1, Timestamp: start.Add(time.Second * 2)})
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u3", Value: 7, Timestamp: start.Add(time.Second * 3)})
 
 	_ = r.Label(Label{TalkName: talk, Name: "label2", Timestamp: start.Add(10 * time.Second)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 0, Timestamp: start.Add(11 * time.Second)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u2", Value: 1, Timestamp: start.Add(10 * time.Second)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u3", Value: 0, Timestamp: start.Add(13 * time.Second)}) // Will be added to the next label.
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 3, Timestamp: start.Add(11 * time.Second)})
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u2", Value: 9, Timestamp: start.Add(10 * time.Second)})
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u3", Value: 2, Timestamp: start.Add(13 * time.Second)}) // Will be added to the next label.
 
 	_ = r.Label(Label{TalkName: talk, Name: "label3", Timestamp: start.Add(12 * time.Second)})
 
