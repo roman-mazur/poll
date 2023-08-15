@@ -37,7 +37,7 @@ func TestHTTPHandler(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	t.Run("submit data", func(t *testing.T) {
+	t.Run("submit data and fetch", func(t *testing.T) {
 		vote := Vote{
 			TalkName:  "test-talk",
 			Timestamp: ts,
@@ -56,12 +56,35 @@ func TestHTTPHandler(t *testing.T) {
 			t.Error(err)
 		}
 
-		agg := repo.Aggregate("test-talk")
-		if len(agg.Labels) == 0 {
+		if len(repo.votes.get("test-talk")) == 0 {
+			t.Error("no votes stored")
+		}
+		if len(repo.labels.get("test-talk")) == 0 {
 			t.Error("no labels stored")
 		}
-		if len(agg.Votes) == 0 {
-			t.Error("no votes stored")
+
+		agg := repo.Aggregate("test-talk")
+		if len(agg.Data) == 0 {
+			t.Error("no aggregated data retrieved")
+		}
+
+		resp, err := http.Get(srv.URL + "/talk-data/" + vote.TalkName)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if resp.StatusCode != http.StatusOK {
+			t.Error("bad status", resp.StatusCode)
+		}
+		var a Aggregate
+		err = json.NewDecoder(resp.Body).Decode(&a)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if a.TalkName != "test-talk" {
+			t.Errorf("wrong talk name [%s]", a.TalkName)
+		}
+		if len(a.Data) == 0 {
+			t.Error("no data")
 		}
 	})
 

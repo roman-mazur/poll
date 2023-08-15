@@ -14,7 +14,7 @@ import (
 // HTTPHandler provides a REST API handler for the votes data management.
 func HTTPHandler(repo *Repository) http.Handler {
 	mux := http.NewServeMux()
-	mux.Handle("/votes", adapt(method("POST", process(repo.Add))))
+	mux.Handle("/votes", adapt(method("POST", process(repo.Vote))))
 	mux.Handle("/labels", adapt(method("POST", process(repo.Label))))
 
 	mux.Handle("/talk-data/", adapt(method("GET", func(r *http.Request) (any, error) {
@@ -27,18 +27,13 @@ func HTTPHandler(repo *Repository) http.Handler {
 	return mux
 }
 
-type touch interface {
-	touch()
-}
-
-func process[T touch](f func(T) error) handler {
+func process[T any](f func(T) error) handler {
 	return func(r *http.Request) (any, error) {
 		var data T
 		if err := parse(r, &data); err != nil {
 			log.Printf("parse error: %s", err)
 			return nil, err
 		}
-		data.touch()
 		return nil, f(data)
 	}
 }
@@ -88,7 +83,8 @@ func method(m string, f handler) handler {
 
 type clientError struct {
 	status int
-	Msg    string `json:"msg"`
+
+	Msg string `json:"msg"`
 }
 
 func (ce *clientError) Error() string {

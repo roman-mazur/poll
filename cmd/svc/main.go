@@ -2,7 +2,8 @@
 // Its implementation is based on the rmazur.io/poll/votes package.
 //
 // Example usage:
-//		./svc --addr=localhost:8080
+//
+//	./svc --addr=localhost:8080
 package main
 
 import (

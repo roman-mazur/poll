@@ -23,6 +23,10 @@ func (v Vote) touch() {
 	v.Timestamp = time.Now()
 }
 
+func (v Vote) t() time.Time {
+	return v.Timestamp
+}
+
 // Label provides some context of what the presentation is about at some given time.
 // It can be used as a marker pointing to a specific place in the presentation to correlate the presentation content
 // with the votes.
@@ -38,4 +42,8 @@ func (l Label) talkName() string {
 
 func (l Label) touch() {
 	l.Timestamp = time.Now()
+}
+
+func (l Label) t() time.Time {
+	return l.Timestamp
 }
