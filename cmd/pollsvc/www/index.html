@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>poll</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+  <style lang="css">
+    .the-end {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="poll card darken-1">
+    <div class="card-content">
+      <h2 class="card-title" id="question">Do you agree with the speaker?</h2>
+      <button id="choice-negative">No</button>
+      <button id="choice-positive">Yes</button>
+    </div>
+  </section>
+
+  <section class="the-end card" id="the-end">
+    <div class="card-content center">
+      <h3>Thanks for your participation!</h3>
+      <p>That's it.</p>
+    </div>
+  </section>
+
+  <script>
+    const questions = [
+      {q: 'Do you agree with the speaker?', neg: 'No', pos: 'Yes'},
+      {q: 'Does it make sense?', neg: 'Not to me', pos: 'Sure'},
+    ];
+
+    const deadline = Date.now() + 1000*60; // TODO.
+
+    function init() {
+      if (Date.now() >= deadline) {
+        let pollElements = document.getElementsByClassName('poll');
+        for (let i = 0; i < pollElements.length; i++) {
+          pollElements[i].style.display = 'none';
+        }
+        document.getElementById('the-end').style.display = 'block';
+      }
+
+      const idx = Math.floor(Math.random()*questions.length);
+      const variant = questions[idx];
+
+      const qEl = document.getElementById('question');
+      qEl.innerText = variant.q;
+
+      const choiceNeg = document.getElementById('choice-negative');
+      choiceNeg.innerText = variant.neg;
+      choiceNeg.onclick = () => {
+        submitChoice('test-talk', 1);
+      };
+
+      const choicePos = document.getElementById('choice-positive');
+      choicePos.innerText = variant.pos;
+      choicePos.onclick = () => {
+        submitChoice('test-talk', 10);
+      };
+    }
+
+    async function submitChoice(talk, val) {
+      const resp = await fetch('/v1/votes', {
+        method: 'POST',
+        body: JSON.stringify({
+          talk_name: talk,
+          value: val,
+          voter_id: voterId(),
+        })
+      });
+      return await resp.json();
+    }
+
+    function voterId() {
+      let res = localStorage.getItem('vid/v2');
+      if (!res) {
+        res = Math.round(Math.random() * 1000000000).toString(16);
+        localStorage.setItem('vid', res);
+      }
+      return res;
+    }
+
+    init();
+    //const period = 1000*60*3; // TODO
+    const period = 1000;
+    window.setInterval(init, period);
+  </script>
+
+</body>
+</html>
