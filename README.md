@@ -5,7 +5,7 @@ This experimental repo gives an example of how the web server usage model can be
 an infrastructure definition making it possible to deploy the service with a cloud provider utilizing the
 resources derived from the usage model.
 
-This repo is a Go module. Package `votes` with `cmd/svc` provide the web service implementation that 
+This repo is a Go module. Package `votes` with `cmd/pollsvc` provide the web service implementation that 
 exposes REST API for collecting votes that represent if audience agrees with a speaker during a
 presentation.
 
