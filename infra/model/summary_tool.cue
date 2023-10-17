@@ -1,4 +1,4 @@
-package defs
+package model
 
 import (
 	"encoding/yaml"

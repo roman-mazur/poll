@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>chart</title>
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <style>
+    .chart {
+        width: 100%;
+        height: 75%;
+        margin: 10px auto;
+    }
+    body {
+        width: 100%;
+        height: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chart" id="chart"></div>
+
+  <script>
+    async function currentTalkId() {
+      return await (await fetch('/config/current')).text()
+    }
+
+    async function fetchScores(talk) {
+      const resp = await fetch(`/v1/talk-data/${talk}`);
+      return await resp.json();
+    }
+
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(async () => {
+      const talkId = await currentTalkId();
+      const data = (await fetchScores(talkId)).data;
+      const table = new google.visualization.DataTable(
+        {
+          cols: [
+            {id: 'topic', label: 'Topic', type: 'string'},
+            {id: 'pos', label: 'Agree', type: 'number'},
+            {id: 'neg', label: 'Disagree', type: 'number'},
+          ],
+          rows: data.map(d => ({c: [{v: d.label}, {v: d.pos}, {v: -d.neg}]})),
+        }
+      );
+
+      const chart = new google.visualization.BarChart(document.getElementById('chart'));
+      chart.draw(table, {
+        title: 'Audience feedback',
+        legend: {position: 'bottom'},
+      });
+    });
+  </script>
+
+</body>
+</html>

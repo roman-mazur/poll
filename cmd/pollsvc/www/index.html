@@ -6,23 +6,34 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
   <style lang="css">
     .the-end {
-      display: none;
+       display: none;
+    }
+    .poll {
+        padding: 50px 0;
+    }
+    #question {
+        margin-bottom: 50px;
+    }
+    .poll a {
+        padding: 40px 20px;
     }
   </style>
 </head>
 
 <body>
 
-  <section class="poll card darken-1">
-    <div class="card-content">
-      <h2 class="card-title" id="question">Do you agree with the speaker?</h2>
-      <button id="choice-negative">No</button>
-      <button id="choice-positive">Yes</button>
+  <section class="poll card blue-grey darken-1">
+    <div class="card-content white-text">
+      <h2 class="card-title center" id="question">Do you agree with the speaker?</h2>
+      <div class="card-action center">
+        <a id="choice-negative" href="#">No</a>
+        <a id="choice-positive" href="#">Yes</a>
+      </div>
     </div>
   </section>
 
-  <section class="the-end card" id="the-end">
-    <div class="card-content center">
+  <section class="the-end card deep-orange" id="the-end">
+    <div class="card-content center white-text">
       <h3>Thanks for your participation!</h3>
       <p>That's it.</p>
     </div>
@@ -36,7 +47,7 @@
 
     const deadline = Date.now() + 1000*60; // TODO.
 
-    function init() {
+    function init(talkId) {
       if (Date.now() >= deadline) {
         let pollElements = document.getElementsByClassName('poll');
         for (let i = 0; i < pollElements.length; i++) {
@@ -54,13 +65,13 @@
       const choiceNeg = document.getElementById('choice-negative');
       choiceNeg.innerText = variant.neg;
       choiceNeg.onclick = () => {
-        submitChoice('test-talk', 1);
+        submitChoice(talkId, 1);
       };
 
       const choicePos = document.getElementById('choice-positive');
       choicePos.innerText = variant.pos;
       choicePos.onclick = () => {
-        submitChoice('test-talk', 10);
+        submitChoice(talkId, 10);
       };
     }
 
@@ -76,19 +87,30 @@
       return await resp.json();
     }
 
+    async function currentTalkId() {
+      console.log(window.location.search);
+      const sp = new URLSearchParams(window.location.search);
+      return sp.get('id');
+    }
+
     function voterId() {
-      let res = localStorage.getItem('vid/v2');
+      const key = 'vid/v2';
+      let res = localStorage.getItem(key);
       if (!res) {
         res = Math.round(Math.random() * 1000000000).toString(16);
-        localStorage.setItem('vid', res);
+        localStorage.setItem(key, res);
       }
       return res;
     }
 
-    init();
-    //const period = 1000*60*3; // TODO
-    const period = 1000;
-    window.setInterval(init, period);
+    currentTalkId().then(id => {
+      const reInit = () => init(id);
+      reInit();
+      //const period = 1000*60*3; // TODO
+      const period = 1000;
+      window.setInterval(reInit, period);
+    });
+
   </script>
 
 </body>
