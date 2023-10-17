@@ -56,16 +56,24 @@ Possible flags are below.
 	http.HandleFunc("/config/new/", func(rw http.ResponseWriter, r *http.Request) {
 		tc.Setup(path.Base(r.URL.Path))
 		rw.WriteHeader(http.StatusOK)
-	})
-
-	http.HandleFunc("/config/current", func(rw http.ResponseWriter, r *http.Request) {
-		rw.WriteHeader(http.StatusOK)
 		_, _ = rw.Write([]byte(tc.CurrentId()))
 	})
 
-	http.Handle("/v1/", http.StripPrefix("/v1", api))
+	http.Handle("/config/current", cors(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		rw.WriteHeader(http.StatusOK)
+		_, _ = rw.Write([]byte(tc.CurrentId()))
+	})))
+
+	http.Handle("/v1/", http.StripPrefix("/v1", cors(api)))
 	http.Handle("/", http.FileServer(http.FS(appFS)))
 	log.Fatal(http.ListenAndServe(*addr, nil))
+}
+
+func cors(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
+		h.ServeHTTP(rw, r)
+	})
 }
 
 type talkConfig struct {

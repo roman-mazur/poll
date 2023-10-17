@@ -1,6 +1,6 @@
 //go:build tooldeps
 
-package main
+package infra
 
 import (
 	_ "cuelang.org/go/cmd/cue"

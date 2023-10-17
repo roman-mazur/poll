@@ -3,7 +3,7 @@ package model
 import "math"
 
 #MB: {
-	#bytes:  uint
+	#bytes: uint
 	math.Round(#bytes / 1024 / 1024)
 }
 

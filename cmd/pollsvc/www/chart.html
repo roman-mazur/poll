@@ -26,14 +26,12 @@
       return await (await fetch('/config/current')).text()
     }
 
-    async function fetchScores(talk) {
-      const resp = await fetch(`/v1/talk-data/${talk}`);
+    async function fetchScores(talkId) {
+      const resp = await fetch(`/v1/talk-data/${talkId}`);
       return await resp.json();
     }
 
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(async () => {
-      const talkId = await currentTalkId();
+    async function drawChart(talkId) {
       const data = (await fetchScores(talkId)).data;
       const table = new google.visualization.DataTable(
         {
@@ -51,6 +49,14 @@
         title: 'Audience feedback',
         legend: {position: 'bottom'},
       });
+    }
+
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(async () => {
+      const talkId = await currentTalkId();
+      const render = () => drawChart(talkId);
+      await render();
+      window.setInterval(render, 5000);
     });
   </script>
 

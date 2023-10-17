@@ -96,10 +96,10 @@
     function voterId() {
       const key = 'vid/v2';
       let res = localStorage.getItem(key);
-      if (!res) {
+      // if (!res) {
         res = Math.round(Math.random() * 1000000000).toString(16);
         localStorage.setItem(key, res);
-      }
+      // }
       return res;
     }
 
