@@ -8,19 +8,24 @@ async function initPoll() {
 
   if (talkId) {
     const slideEls = document.querySelectorAll('section.slides > article');
+    const submittedLabels = {};
     window.handleSlideUpdate = curSlide => {
       if (curSlide >= 0 && curSlide < slideEls.length) {
         const labels = slideEls[curSlide].getElementsByClassName('poll-label');
 
         if (labels.length === 1) {
+          const name = labels[0].innerText;
+          console.log(submittedLabels);
+          if (submittedLabels[name]) return;
+
           fetch(`${pollSvcEndpoint}/v1/labels`, {
             method: 'POST',
             body: JSON.stringify({
               talk_name: talkId,
-              name: labels[0].innerText,
+              name,
               timestamp: new Date().toISOString(),
             })
-          })
+          }).then(() => submittedLabels[name] = true)
         }
       }
     };

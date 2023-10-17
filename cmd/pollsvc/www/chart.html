@@ -32,6 +32,7 @@
     }
 
     async function drawChart(talkId) {
+      if (!talkId) return;
       const data = (await fetchScores(talkId)).data;
       const table = new google.visualization.DataTable(
         {

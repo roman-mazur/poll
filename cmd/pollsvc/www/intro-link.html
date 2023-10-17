@@ -1,0 +1,25 @@
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+  <title>How to join</title>
+</head>
+<body>
+
+<section>
+  <img id="qr" />
+</section>
+<section id="link"></section>
+
+<script>
+  async function currentTalkId() {
+    return await (await fetch('/config/current')).text()
+  }
+
+  currentTalkId().then(talkId => {
+    const link = `${window.location.protocol}://${window.location.host}?id=${talkId}`;
+    const qrUrl = `https://zxing.org/w/chart?cht=qr&chs=350x350&chld=L&choe=UTF-8&chl=${encodeURIComponent(link)}`
+    document.getElementById('qr').src = qrUrl;
+  });
+</script>
+
+</body>
+</html>

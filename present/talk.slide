@@ -11,5 +11,22 @@ roman@rmazur.io
 
 ## Introduction
 
-.iframe http://localhost:17000/chart.html 600 _
+.iframe http://localhost:17000/intro-link.html 400 _
 .caption poll: Introduction
+
+## Testing
+
+.iframe http://localhost:17000/chart.html 400 _
+
+## What's happening
+
+## How do we make it?
+
+## Data: votes
+
+.code ../votes/structure/data.go /present: vote, OMIT/,/present: vote-end, OMIT/
+.caption poll: Data structures
+
+## Data: labels
+
+.code ../votes/structure/data.go /present: label, OMIT/,/present: label-end, OMIT/
