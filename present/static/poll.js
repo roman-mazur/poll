@@ -15,7 +15,6 @@ async function initPoll() {
 
         if (labels.length === 1) {
           const name = labels[0].innerText;
-          console.log(submittedLabels);
           if (submittedLabels[name]) return;
 
           fetch(`${pollSvcEndpoint}/v1/labels`, {
@@ -32,4 +31,4 @@ async function initPoll() {
   }
 }
 
-initPoll().then();
+initPoll().then(() => console.debug('polling initialized'));

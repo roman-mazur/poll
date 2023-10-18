@@ -397,6 +397,8 @@ function updateHash() {
 
 /* Event listeners */
 
+let jumpSlide = -1;
+
 function handleBodyKeyDown(event) {
   // If we're in a code element, only handle pgup/down.
   var inCode = event.target.classList.contains('code');
@@ -438,7 +440,30 @@ function handleBodyKeyDown(event) {
       prevSlide();
       event.preventDefault();
       break;
+
+    case 48:
+      if (inCode) break;
+      if (jumpSlide !== -1) {
+        curSlide = jumpSlide;
+        updateSlides();
+        event.preventDefault();
+      }
+      break;
+
+    default:
+      if (!inCode && 49 <= event.keyCode && event.keyCode <= 57) {
+        const slideIndex = event.keyCode - 49;
+        if (slideIndex < slideEls.length) {
+          if (jumpSlide === -1) {
+            jumpSlide = curSlide;
+          }
+          curSlide = slideIndex;
+          updateSlides();
+          event.preventDefault();
+        }
+      }
   }
+
 }
 
 function scaleSmallViewports() {
