@@ -24,9 +24,9 @@ roman@rmazur.io
 
 ## Data: votes
 
-.code ../votes/structure/data.go /present: vote, OMIT/,/present: vote-end, OMIT/
+.code ../votes/structure/data.go /present: vote/,/present: vote-end/
 .caption poll: Data structures
 
 ## Data: labels
 
-.code ../votes/structure/data.go /present: label, OMIT/,/present: label-end, OMIT/
+.code ../votes/structure/data.go /present: label/,/present: label-end/

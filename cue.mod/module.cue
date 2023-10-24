@@ -1,1 +1,1 @@
-module: "rmazur.io/poll-cue"
+module: "rmazur.io/poll-defs"

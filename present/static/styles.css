@@ -80,12 +80,12 @@
     -webkit-transition: -webkit-transform 0.3s ease-out;
   }
   .slides.layout-widescreen > article {
-    margin-left: -550px;
-    width: 1100px;
+    margin-left: -650px;
+    width: 1300px;
   }
   .slides.layout-faux-widescreen > article {
-    margin-left: -550px;
-    width: 1100px;
+    margin-left: -650px;
+    width: 1300px;
 
     padding: 40px 160px;
   }
@@ -125,11 +125,11 @@
   }
   .slides.layout-widescreen #prev-slide-area,
   .slides.layout-faux-widescreen #prev-slide-area {
-    margin-left: -650px;
+    margin-left: -750px;
   }
   .slides.layout-widescreen #next-slide-area,
   .slides.layout-faux-widescreen #next-slide-area {
-    margin-left: 500px;
+    margin-left: 600px;
   }
 
   /* Slides */
@@ -176,18 +176,18 @@
   .slides.layout-widescreen > article.far-past,
   .slides.layout-faux-widescreen > article.far-past {
     display: block;
-    transform: translate(-2260px);
-    -o-transform: translate(-2260px);
-    -moz-transform: translate(-2260px);
-    -webkit-transform: translate3d(-2260px, 0, 0);
+    transform: translate(-2800px);
+    -o-transform: translate(-2800px);
+    -moz-transform: translate(-2800px);
+    -webkit-transform: translate3d(-2800px, 0, 0);
   }
   .slides.layout-widescreen > article.past,
   .slides.layout-faux-widescreen > article.past {
     display: block;
-    transform: translate(-1130px);
-    -o-transform: translate(-1130px);
-    -moz-transform: translate(-1130px);
-    -webkit-transform: translate3d(-1130px, 0, 0);
+    transform: translate(-1400px);
+    -o-transform: translate(-1400px);
+    -moz-transform: translate(-1400px);
+    -webkit-transform: translate3d(-1400px, 0, 0);
   }
   .slides.layout-widescreen > article.current,
   .slides.layout-faux-widescreen > article.current {
@@ -200,18 +200,18 @@
   .slides.layout-widescreen > article.next,
   .slides.layout-faux-widescreen > article.next {
     display: block;
-    transform: translate(1130px);
-    -o-transform: translate(1130px);
-    -moz-transform: translate(1130px);
-    -webkit-transform: translate3d(1130px, 0, 0);
+    transform: translate(1400px);
+    -o-transform: translate(1400px);
+    -moz-transform: translate(1400px);
+    -webkit-transform: translate3d(1400px, 0, 0);
   }
   .slides.layout-widescreen > article.far-next,
   .slides.layout-faux-widescreen > article.far-next {
     display: block;
-    transform: translate(2260px);
-    -o-transform: translate(2260px);
-    -moz-transform: translate(2260px);
-    -webkit-transform: translate3d(2260px, 0, 0);
+    transform: translate(2800px);
+    -o-transform: translate(2800px);
+    -moz-transform: translate(2800px);
+    -webkit-transform: translate3d(2800px, 0, 0);
   }
 }
 

@@ -20,7 +20,6 @@ func NewRepository() *Repository {
 }
 
 func (r *Repository) Vote(v Vote) error {
-
 	r.votes.add(v)
 	return nil
 }

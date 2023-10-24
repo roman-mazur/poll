@@ -412,6 +412,11 @@ function handleBodyKeyDown(event) {
       if (!inCode) hideHelpText();
       break;
 
+    case 70: // 'F' starts full screen.
+      if (inCode) break;
+      document.body.requestFullscreen().catch(() => {}).then(() => console.log('full screen requested'));
+      break;
+
     case 39: // right arrow
     case 13: // Enter
     case 32: // space
