@@ -5,12 +5,35 @@ import (
 	"rmazur.io/poll-defs/infra/model"
 )
 
-#memReq: model.summary.req.memMB
+pollSvc: {
+	version: "v0.0.1"
+	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-amd64"
+	memReq: model.summary.req.memMB
+
+	installPath: "/usr/bin/pollsvc"
+
+	systemd: """
+	[Unit]
+	Description=Poll Service
+	After=network.target
+	StartLimitIntervalSec=0
+
+	[Service]
+	Type=simple
+	Restart=always
+	RestartSec=1
+	User=ec2-user
+	ExecStart=\(installPath)
+
+	[Install]
+	WantedBy=multi-user.target
+	"""
+}
 
 instanceFilter: {
 	CurrentGeneration: true
 	FreeTierEligible: true
-	MemoryInfo: SizeInMiB: >#memReq & <=(#memReq*2)
+	MemoryInfo: SizeInMiB: >pollSvc.memReq & <=(pollSvc.memReq*2)
 }
 
 awsInstanceType: {
