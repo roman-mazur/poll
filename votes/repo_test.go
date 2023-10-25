@@ -51,3 +51,41 @@ func TestRepository_Aggregate(t *testing.T) {
 		t.Error("bad third record")
 	}
 }
+
+func TestRepository_ReproduceIssues(t *testing.T) {
+	t.Run("no votes", func(t *testing.T) {
+		const talk = "talk1"
+		start := time.Now()
+		r := NewRepository()
+		_ = r.Label(Label{TalkName: talk, Name: "label1", Timestamp: start})
+
+		res := r.Aggregate(talk)
+		if res.Data[0].Label != "label1" {
+			t.Error("bad first label")
+		}
+	})
+	t.Run("zero reports", func(t *testing.T) {
+		const talk = "talkKey/something"
+		start := time.Now()
+		r := NewRepository()
+		_ = r.Label(Label{TalkName: talk, Name: "label1", Timestamp: start})
+		_ = r.Vote(Vote{TalkName: talk, VoterId: "voter1", Timestamp: start.Add(time.Second), Value: 10})
+
+		res := r.Aggregate(talk)
+		if res.Data[0].Pos != 1 {
+			t.Error("incorrect calculation")
+		}
+	})
+	t.Run("duplicates", func(t *testing.T) {
+		const talk = "talkKey/something"
+		start := time.Now()
+		r := NewRepository()
+		_ = r.Label(Label{TalkName: talk, Name: "label1", Timestamp: start})
+		_ = r.Label(Label{TalkName: talk, Name: "label1", Timestamp: start.Add(time.Second)})
+
+		res := r.Aggregate(talk)
+		if len(res.Data) != 1 {
+			t.Error("too much data")
+		}
+	})
+}

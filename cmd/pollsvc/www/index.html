@@ -104,9 +104,12 @@
     }
 
     async function currentTalkId() {
-      console.log(window.location.search);
       const sp = new URLSearchParams(window.location.search);
-      return sp.get('id');
+      return sp.get('id').trim();
+    }
+    function currentTalkName() {
+      const sp = new URLSearchParams(window.location.search);
+      return sp.get('name').trim();
     }
 
     function voterId() {
@@ -124,7 +127,7 @@
         return;
       }
 
-      document.getElementById('talk-title').innerText = id.split('/')[0];
+      document.getElementById('talk-title').innerText = currentTalkName();
 
       const reInit = () => init(id);
       reInit();

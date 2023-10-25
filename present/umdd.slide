@@ -14,10 +14,10 @@ roman@rmazur.io
 .image poll/qr.png 400 _
 .caption poll: Introduction
 
-## Testing
+## Let's show some engagement!
 
-.iframe http://localhost:17000/chart.html 400 _
-//.iframe https://poll.rmazur.io/chart.html 400 _
+.iframe http://localhost:17000/chart.html 600 1000
+//.iframe https://poll.rmazur.io/chart.html 600 900
 
 ## What's happening
 

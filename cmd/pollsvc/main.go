@@ -65,9 +65,9 @@ Possible flags are below.
 			return
 		}
 
-		name := r.URL.Query().Get("name")
-		tc.Setup(name)
-		log.Println("New talk", name, tc.CurrentId())
+		key := strings.TrimSpace(r.URL.Query().Get("key"))
+		tc.Setup(key)
+		log.Println("New talk", tc.CurrentId())
 
 		rw.WriteHeader(http.StatusOK)
 		_, _ = rw.Write([]byte(tc.CurrentId()))
@@ -113,7 +113,7 @@ func (tc *talkConfig) Setup(name string) {
 	tc.mu.Lock()
 	defer tc.mu.Unlock()
 	suffix := sha256.Sum256([]byte(time.Now().String()))
-	tc.talkId = strings.TrimSpace(name) + "/" + hex.EncodeToString(suffix[:])
+	tc.talkId = name + "/" + hex.EncodeToString(suffix[:])
 }
 
 func (tc *talkConfig) CurrentId() string {

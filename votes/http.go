@@ -35,6 +35,7 @@ func process[T any](f func(T) error) handler {
 			log.Printf("parse error: %s", err)
 			return nil, err
 		}
+		log.Println("adding", data)
 		return nil, f(data)
 	}
 }

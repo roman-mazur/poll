@@ -1,6 +1,7 @@
 package votes
 
 import (
+	"log"
 	"sort"
 	"sync"
 	"time"
@@ -25,6 +26,11 @@ func (r *Repository) Vote(v Vote) error {
 }
 
 func (r *Repository) Label(l Label) error {
+	for _, el := range r.labels.get(l.TalkName) {
+		if el.Name == l.Name {
+			return nil
+		}
+	}
 	r.labels.add(l)
 	return nil
 }
@@ -37,12 +43,14 @@ func (r *Repository) Aggregate(talkName string) (res Aggregate) {
 	labels := r.labels.get(talkName)
 	votes := r.votes.get(talkName)
 
+	log.Println(votes)
+
 	res.Data = make([]aggData, len(labels))
 
 	type votesSet map[string]struct{}
 
 	li, vi := 0, 0
-	for li < len(labels) && vi < len(votes) {
+	for li < len(labels) {
 		label := labels[li]
 		d := aggData{
 			Label: label.Name,
@@ -66,7 +74,6 @@ func (r *Repository) Aggregate(talkName string) (res Aggregate) {
 		res.Data[li] = d
 		li++
 	}
-
 	return
 }
 
