@@ -3,7 +3,7 @@
 //
 // Example usage:
 //
-//	./pollsvc --addr=localhost:8080
+//	./pollsvc --addr=:443 --tls=/opt/pollsvc-certs
 package main
 
 import (
@@ -25,7 +25,8 @@ import (
 )
 
 var (
-	addr = flag.String("addr", "127.0.0.1:17000", "Address to listen on")
+	addr    = flag.String("addr", "127.0.0.1:17000", "Address to listen on")
+	tlsPath = flag.String("tls", "", "Path to the TLS cert.pem and pkey.pem files that should be used to configure the HTTP server")
 
 	//go:embed www
 	www embed.FS
@@ -66,7 +67,21 @@ Possible flags are below.
 
 	http.Handle("/v1/", http.StripPrefix("/v1", cors(api)))
 	http.Handle("/", http.FileServer(http.FS(appFS)))
-	log.Fatal(http.ListenAndServe(*addr, nil))
+
+	server := &http.Server{
+		Addr:           *addr,
+		Handler:        nil,
+		ReadTimeout:    60 * time.Second,
+		WriteTimeout:   120 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+
+	log.Printf("Listening on %s", *addr)
+	if *tlsPath != "" {
+		log.Fatal(server.ListenAndServeTLS(filepath.Join(*tlsPath, "cert.pem"), filepath.Join(*tlsPath, "pkey.pem")))
+	} else {
+		log.Fatal(server.ListenAndServe())
+	}
 }
 
 func cors(h http.Handler) http.Handler {
