@@ -3,6 +3,8 @@
 <head>
   <title>poll</title>
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
   <style lang="css">
     .the-end {
@@ -14,20 +16,25 @@
     #question {
         margin-bottom: 50px;
     }
-    .poll a {
-        padding: 40px 20px;
+
+    .card-action a {
+      margin: 0 20px;
     }
   </style>
 </head>
 
 <body>
 
+  <section>
+    <h1 id="talk-title" class="center">Presentation title</h1>
+  </section>
+
   <section class="poll card blue-grey darken-1">
     <div class="card-content white-text">
       <h2 class="card-title center" id="question">Do you agree with the speaker?</h2>
       <div class="card-action center">
-        <a id="choice-negative" href="#">No</a>
-        <a id="choice-positive" href="#">Yes</a>
+        <a id="choice-negative" href="#" class="btn-large">No</a>
+        <a id="choice-positive" href="#" class="btn-large">Yes</a>
       </div>
     </div>
   </section>
@@ -43,9 +50,10 @@
     const questions = [
       {q: 'Do you agree with the speaker?', neg: 'No', pos: 'Yes'},
       {q: 'Does it make sense?', neg: 'Not to me', pos: 'Sure'},
+      {q: 'Still following?', neg: 'You lost me', pos: "I'm all ears"},
     ];
 
-    const deadline = Date.now() + 1000*60; // TODO.
+    const deadline = Date.now() + 1000*60*60;
 
     function init(talkId) {
       if (Date.now() >= deadline) {
@@ -112,10 +120,15 @@
     }
 
     currentTalkId().then(id => {
+      if (!id) {
+        return;
+      }
+
+      document.getElementById('talk-title').innerText = id.split('/')[0];
+
       const reInit = () => init(id);
       reInit();
-      //const period = 1000*60*3; // TODO
-      const period = 1000;
+      const period = 1000*60*3;
       window.setInterval(reInit, period);
     });
 

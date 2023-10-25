@@ -16,8 +16,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -65,7 +65,7 @@ Possible flags are below.
 			return
 		}
 
-		tc.Setup(path.Base(r.URL.Path))
+		tc.Setup(r.URL.Query().Get("name"))
 		rw.WriteHeader(http.StatusOK)
 		_, _ = rw.Write([]byte(tc.CurrentId()))
 	})
@@ -110,7 +110,7 @@ func (tc *talkConfig) Setup(name string) {
 	tc.mu.Lock()
 	defer tc.mu.Unlock()
 	suffix := sha256.Sum256([]byte(time.Now().String()))
-	tc.talkId = name + "/" + hex.EncodeToString(suffix[:])
+	tc.talkId = strings.TrimSpace(name) + "/" + hex.EncodeToString(suffix[:])
 }
 
 func (tc *talkConfig) CurrentId() string {
