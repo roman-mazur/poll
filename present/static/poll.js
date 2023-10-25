@@ -1,4 +1,4 @@
-const pollSvcEndpoint = 'http://localhost:17000';
+const pollSvcEndpoint = 'https://poll.rmazur.io';
 
 async function initPoll() {
   let talkId = null;

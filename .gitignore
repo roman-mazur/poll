@@ -1,3 +1,4 @@
 *_gen.*
 pollsvc-amd64
 .creds/
+present/poll/

@@ -11,12 +11,12 @@ roman@rmazur.io
 
 ## Introduction
 
-.iframe http://localhost:17000/intro-link.html 400 _
+.image poll/qr.png 400 _
 .caption poll: Introduction
 
 ## Testing
 
-.iframe http://localhost:17000/chart.html 400 _
+.iframe https://poll.rmazur.io/chart.html 400 _
 
 ## What's happening
 
