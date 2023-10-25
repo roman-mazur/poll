@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"path"
 
 	"cuelang.org/go/cue/errors"
@@ -18,7 +19,7 @@ func HTTPHandler(repo *Repository) http.Handler {
 	mux.Handle("/labels", adapt(method("POST", process(repo.Label))))
 
 	mux.Handle("/talk-data/", adapt(method("GET", func(r *http.Request) (any, error) {
-		talkId := path.Base(r.URL.Path)
+		talkId, _ := url.PathUnescape(path.Base(r.URL.EscapedPath()))
 		if talkId == "" {
 			return nil, &clientError{Msg: "no talk ID"}
 		}

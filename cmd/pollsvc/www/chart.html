@@ -27,7 +27,7 @@
     }
 
     async function fetchScores(talkId) {
-      const resp = await fetch(`/v1/talk-data/${talkId}`);
+      const resp = await fetch(`/v1/talk-data/${encodeURIComponent(talkId)}`);
       return await resp.json();
     }
 

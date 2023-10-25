@@ -55,7 +55,7 @@ Possible flags are below.
 
 	var tc talkConfig
 
-	http.HandleFunc("/config/new/", func(rw http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/config/new", func(rw http.ResponseWriter, r *http.Request) {
 		if r.Method != "POST" {
 			rw.WriteHeader(http.StatusMethodNotAllowed)
 			return
@@ -65,7 +65,10 @@ Possible flags are below.
 			return
 		}
 
-		tc.Setup(r.URL.Query().Get("name"))
+		name := r.URL.Query().Get("name")
+		tc.Setup(name)
+		log.Println("New talk", name, tc.CurrentId())
+
 		rw.WriteHeader(http.StatusOK)
 		_, _ = rw.Write([]byte(tc.CurrentId()))
 	})
