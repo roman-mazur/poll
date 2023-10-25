@@ -25,8 +25,9 @@ import (
 )
 
 var (
-	addr    = flag.String("addr", "127.0.0.1:17000", "Address to listen on")
-	tlsPath = flag.String("tls", "", "Path to the TLS cert.pem and pkey.pem files that should be used to configure the HTTP server")
+	addr        = flag.String("addr", "127.0.0.1:17000", "Address to listen on")
+	tlsPath     = flag.String("tls", "", "Path to the TLS cert.pem and pkey.pem files that should be used to configure the HTTP server")
+	adminSecret = flag.String("admin-secret", "", "Admin secret to check for the config update")
 
 	//go:embed www
 	www embed.FS
@@ -55,6 +56,15 @@ Possible flags are below.
 	var tc talkConfig
 
 	http.HandleFunc("/config/new/", func(rw http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			rw.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		if r.Header.Get("authorization") != *adminSecret {
+			rw.WriteHeader(http.StatusForbidden)
+			return
+		}
+
 		tc.Setup(path.Base(r.URL.Path))
 		rw.WriteHeader(http.StatusOK)
 		_, _ = rw.Write([]byte(tc.CurrentId()))
@@ -100,7 +110,7 @@ func (tc *talkConfig) Setup(name string) {
 	tc.mu.Lock()
 	defer tc.mu.Unlock()
 	suffix := sha256.Sum256([]byte(time.Now().String()))
-	tc.talkId = name + "-" + hex.EncodeToString(suffix[:])
+	tc.talkId = name + "/" + hex.EncodeToString(suffix[:])
 }
 
 func (tc *talkConfig) CurrentId() string {

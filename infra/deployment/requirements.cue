@@ -6,11 +6,12 @@ import (
 )
 
 pollSvc: {
-	version: "v0.0.1"
+	version:      "v0.0.3"
 	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-amd64"
-	memReq: model.summary.req.memMB
+	memReq:       model.summary.req.memMB
 
 	installPath: "/usr/bin/pollsvc"
+	certPath:    "/opt/pollsvc"
 
 	systemd: """
 	[Unit]
@@ -22,8 +23,8 @@ pollSvc: {
 	Type=simple
 	Restart=always
 	RestartSec=1
-	User=ec2-user
-	ExecStart=\(installPath)
+	User=root
+	ExecStart=\(installPath) --addr=:443 --tls=\(certPath)
 
 	[Install]
 	WantedBy=multi-user.target
@@ -32,13 +33,13 @@ pollSvc: {
 
 instanceFilter: {
 	CurrentGeneration: true
-	FreeTierEligible: true
-	MemoryInfo: SizeInMiB: >pollSvc.memReq & <=(pollSvc.memReq*2)
+	FreeTierEligible:  true
+	MemoryInfo: SizeInMiB: >pollSvc.memReq & <=(pollSvc.memReq * 2)
 }
 
 awsInstanceType: {
 	candidates: [_]
-	candidates: [for c in eucentral1.InstanceTypes if (c & instanceFilter) != _|_ {c}]
+	candidates: [ for c in eucentral1.InstanceTypes if (c & instanceFilter) != _|_ {c}]
 
 	info: candidates[0]
 	name: info.InstanceType
