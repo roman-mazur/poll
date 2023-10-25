@@ -24,7 +24,7 @@ pollSvc: {
 	Restart=always
 	RestartSec=1
 	User=root
-	ExecStart=\(installPath) --addr=:443 --tls=\(certPath)
+	ExecStart=\(installPath) --addr=:443 --tls=\(certPath) --admin-secret="\(inputs.admin.secret)"
 
 	[Install]
 	WantedBy=multi-user.target
