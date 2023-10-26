@@ -11,13 +11,21 @@ roman@rmazur.io
 
 ## Introduction
 
-.image poll/qr.png 400 _
+.image https://detector.media/doc/images/news/archive/2016/165616/i75_ArticleImage_165616.jpg
 .caption poll: Introduction
+
+## The device
+
+.image poll/zoom-on-poll.png
+
+## Be my guest
+
+.image poll/qr.png 400 _
 
 ## Let's show some engagement!
 
-.iframe http://localhost:17000/chart.html 600 1000
-//.iframe https://poll.rmazur.io/chart.html 600 1000
+//.iframe http://localhost:17000/chart.html 600 1000
+.iframe https://poll.rmazur.io/chart.html 600 1000
 
 ## What's happening
 
