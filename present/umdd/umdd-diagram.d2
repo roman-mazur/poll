@@ -1,0 +1,9 @@
+direction: right
+
+model.shape: circle
+deployment.shape: circle
+monitoring.shape: circle
+
+model -> deployment: shapes
+deployment -> monitoring: exposes model-related metrics
+monitoring -> model: refines
