@@ -9,24 +9,35 @@ import (
 func TestRepository_Aggregate(t *testing.T) {
 	const talk = "talk1"
 	start := time.Now()
+	now := start
 
 	r := NewRepository()
+	r.changeClock(func() time.Time { return now })
 
 	// Lines represent the calls handling sequence, not the chronological timeline.
 
-	_ = r.Label(Label{TalkName: talk, Name: "label1", Timestamp: start})
+	_ = r.Label(Label{TalkName: talk, Name: "label1"})
 
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 8, Timestamp: start.Add(time.Second)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u2", Value: 8, Timestamp: start.Add(time.Second * 3 / 2)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 1, Timestamp: start.Add(time.Second * 2)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u3", Value: 7, Timestamp: start.Add(time.Second * 3)})
+	now = start.Add(time.Second)
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 8})
+	now = start.Add(time.Second / 2)
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u2", Value: 8})
+	now = start.Add(time.Second * 2)
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 1})
+	now = start.Add(time.Second * 3)
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u3", Value: 7})
 
-	_ = r.Label(Label{TalkName: talk, Name: "label2", Timestamp: start.Add(10 * time.Second)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 3, Timestamp: start.Add(11 * time.Second)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u2", Value: 9, Timestamp: start.Add(10 * time.Second)})
-	_ = r.Vote(Vote{TalkName: talk, VoterId: "u3", Value: 2, Timestamp: start.Add(13 * time.Second)}) // Will be added to the next label.
+	now = start.Add(time.Second * 10)
+	_ = r.Label(Label{TalkName: talk, Name: "label2"})
+	now = start.Add(time.Second * 11)
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u1", Value: 3})
+	now = start.Add(time.Second * 10)
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u2", Value: 9})
+	now = start.Add(time.Second * 13)
+	_ = r.Vote(Vote{TalkName: talk, VoterId: "u3", Value: 2}) // Will be added to the next label.
 
-	_ = r.Label(Label{TalkName: talk, Name: "label3", Timestamp: start.Add(12 * time.Second)})
+	now = start.Add(time.Second * 12)
+	_ = r.Label(Label{TalkName: talk, Name: "label3"})
 
 	a := r.Aggregate(talk)
 	t.Log(a.Data)
@@ -55,9 +66,8 @@ func TestRepository_Aggregate(t *testing.T) {
 func TestRepository_ReproduceIssues(t *testing.T) {
 	t.Run("no votes", func(t *testing.T) {
 		const talk = "talk1"
-		start := time.Now()
 		r := NewRepository()
-		_ = r.Label(Label{TalkName: talk, Name: "label1", Timestamp: start})
+		_ = r.Label(Label{TalkName: talk, Name: "label1"})
 
 		res := r.Aggregate(talk)
 		if res.Data[0].Label != "label1" {
@@ -66,10 +76,15 @@ func TestRepository_ReproduceIssues(t *testing.T) {
 	})
 	t.Run("zero reports", func(t *testing.T) {
 		const talk = "talkKey/something"
-		start := time.Now()
+		now := time.Now()
 		r := NewRepository()
-		_ = r.Label(Label{TalkName: talk, Name: "label1", Timestamp: start})
-		_ = r.Vote(Vote{TalkName: talk, VoterId: "voter1", Timestamp: start.Add(time.Second), Value: 10})
+		r.changeClock(func() time.Time {
+			return now
+		})
+
+		_ = r.Label(Label{TalkName: talk, Name: "label1"})
+		now = now.Add(time.Second)
+		_ = r.Vote(Vote{TalkName: talk, VoterId: "voter1", Value: 10})
 
 		res := r.Aggregate(talk)
 		if res.Data[0].Pos != 1 {
@@ -78,14 +93,34 @@ func TestRepository_ReproduceIssues(t *testing.T) {
 	})
 	t.Run("duplicates", func(t *testing.T) {
 		const talk = "talkKey/something"
-		start := time.Now()
 		r := NewRepository()
-		_ = r.Label(Label{TalkName: talk, Name: "label1", Timestamp: start})
-		_ = r.Label(Label{TalkName: talk, Name: "label1", Timestamp: start.Add(time.Second)})
+		_ = r.Label(Label{TalkName: talk, Name: "label1"})
+		_ = r.Label(Label{TalkName: talk, Name: "label1"})
 
 		res := r.Aggregate(talk)
 		if len(res.Data) != 1 {
 			t.Error("too much data")
+		}
+	})
+	t.Run("wrong grouping", func(t *testing.T) {
+		const talk = "talkKey/something"
+		now := time.Now()
+		r := NewRepository()
+		r.changeClock(func() time.Time { return now })
+
+		_ = r.Label(Label{TalkName: talk, Name: "label1"})
+		now = now.Add(time.Second)
+		_ = r.Label(Label{TalkName: talk, Name: "label2"})
+		now = now.Add(time.Second)
+		_ = r.Vote(Vote{TalkName: talk, VoterId: "voter1", Value: 10})
+
+		res := r.Aggregate(talk)
+		if len(res.Data) != 2 {
+			t.Fatal("unexpected groups count")
+		}
+		if res.Data[1].Pos != 1 {
+			t.Log(res)
+			t.Error("wrong grouping")
 		}
 	})
 }

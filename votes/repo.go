@@ -1,7 +1,6 @@
 package votes
 
 import (
-	"log"
 	"sort"
 	"sync"
 	"time"
@@ -9,19 +8,24 @@ import (
 
 // Repository keeps the collected data about votes and labels.
 type Repository struct {
-	votes  mapStore[Vote]
-	labels mapStore[Label]
+	votes  mapStore[Vote, *Vote]
+	labels mapStore[Label, *Label]
 }
 
 func NewRepository() *Repository {
 	return &Repository{
-		votes:  makeStore[Vote](),
-		labels: makeStore[Label](),
+		votes:  makeStore[Vote, *Vote](time.Now),
+		labels: makeStore[Label, *Label](time.Now),
 	}
 }
 
+func (r *Repository) changeClock(c clock) {
+	r.votes.c = c
+	r.labels.c = c
+}
+
 func (r *Repository) Vote(v Vote) error {
-	r.votes.add(v)
+	r.votes.add(&v)
 	return nil
 }
 
@@ -31,7 +35,7 @@ func (r *Repository) Label(l Label) error {
 			return nil
 		}
 	}
-	r.labels.add(l)
+	r.labels.add(&l)
 	return nil
 }
 
@@ -42,8 +46,6 @@ func (r *Repository) Aggregate(talkName string) (res Aggregate) {
 
 	labels := r.labels.get(talkName)
 	votes := r.votes.get(talkName)
-
-	log.Println(votes)
 
 	res.Data = make([]aggData, len(labels))
 
@@ -89,42 +91,44 @@ type aggData struct {
 	Label string    `json:"label"`
 }
 
-type talkData interface {
+type itemData interface {
 	talkName() string
-}
-
-type storeItem interface {
-	talkData
-	touch
-}
-
-type mapStore[T storeItem] struct {
-	sync.Mutex
-	m map[string]chrono[T]
-}
-
-type touch interface {
-	touch()
 	t() time.Time
 }
 
-func makeStore[T storeItem]() mapStore[T] {
-	return mapStore[T]{
+type touch[T itemData] interface {
+	touch(c clock)
+	*T
+}
+
+type clock func() time.Time
+
+type mapStore[T itemData, PT touch[T]] struct {
+	c clock
+
+	mu sync.Mutex
+	m  map[string]chrono[T]
+}
+
+func makeStore[T itemData, PT touch[T]](c clock) mapStore[T, PT] {
+	return mapStore[T, PT]{
 		m: make(map[string]chrono[T]),
+		c: c,
 	}
 }
 
-func (ms *mapStore[T]) add(item T) {
-	ms.Lock()
-	defer ms.Unlock()
-	key := item.talkName()
-	item.touch()
-	ms.m[key] = append(ms.m[key], item)
+func (ms *mapStore[T, PT]) add(item PT) {
+	ms.mu.Lock()
+	defer ms.mu.Unlock()
+	key := (*item).talkName()
+	item.touch(ms.c)
+	ms.m[key] = append(ms.m[key], *item)
 }
 
-func (ms *mapStore[T]) get(key string) []T {
-	ms.Lock()
-	defer ms.Unlock()
+func (ms *mapStore[T, PT]) get(key string) []T {
+	ms.mu.Lock()
+	defer ms.mu.Unlock()
+
 	items := ms.m[key]
 	res := make(chrono[T], len(items))
 	copy(res, items)
@@ -132,7 +136,7 @@ func (ms *mapStore[T]) get(key string) []T {
 	return res
 }
 
-type chrono[T touch] []T
+type chrono[T itemData] []T
 
 func (c chrono[T]) Len() int           { return len(c) }
 func (c chrono[T]) Swap(i, j int)      { c[i], c[j] = c[j], c[i] }

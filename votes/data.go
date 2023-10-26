@@ -14,8 +14,8 @@ func (v Vote) talkName() string {
 	return v.TalkName
 }
 
-func (v Vote) touch() {
-	v.Timestamp = time.Now()
+func (v *Vote) touch(c clock) {
+	v.Timestamp = c()
 }
 
 func (v Vote) t() time.Time {
@@ -31,8 +31,8 @@ func (l Label) talkName() string {
 	return l.TalkName
 }
 
-func (l Label) touch() {
-	l.Timestamp = time.Now()
+func (l *Label) touch(c clock) {
+	l.Timestamp = c()
 }
 
 func (l Label) t() time.Time {
