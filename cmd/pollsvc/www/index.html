@@ -100,13 +100,18 @@
 
     function showFeedback(talkId) {
       console.log("Vote submitted. Showing feedback.");
+
       const pollElement = document.getElementById('poll');
+
       const showQuestion = questionVisible => {
         if (questionVisible) {
           window.clearInterval(timerUpdate);
         }
-        pollElement.getElementsByClassName('question-block')[0].style.display = questionVisible ? 'block' : 'none';
-        pollElement.getElementsByClassName('feedback-block')[0].style.display = questionVisible ? 'none' : 'block';
+        const qEl = pollElement.getElementsByClassName('question-block')[0];
+        const fEl = pollElement.getElementsByClassName('feedback-block')[0];
+
+        qEl.style.display = questionVisible ? 'block' : 'none';
+        fEl.style.display = questionVisible ? 'none' : 'block';
       };
 
       showQuestion(false);

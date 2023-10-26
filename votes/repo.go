@@ -19,11 +19,6 @@ func NewRepository() *Repository {
 	}
 }
 
-func (r *Repository) changeClock(c clock) {
-	r.votes.c = c
-	r.labels.c = c
-}
-
 func (r *Repository) Vote(v Vote) error {
 	r.votes.add(&v)
 	return nil
@@ -77,6 +72,11 @@ func (r *Repository) Aggregate(talkName string) (res Aggregate) {
 		li++
 	}
 	return
+}
+
+func (r *Repository) changeClock(c clock) {
+	r.votes.c = c
+	r.labels.c = c
 }
 
 type Aggregate struct {
