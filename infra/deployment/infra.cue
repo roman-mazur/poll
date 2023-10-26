@@ -42,7 +42,7 @@ terraform: {
 
 	resource: aws_eip: poll_server_ip: {
 		instance: "${aws_instance.poll_server.id}"
-		domain: "vpc"
+		domain:   "vpc"
 	}
 
 	data: aws_ami: poll_server_ami: {

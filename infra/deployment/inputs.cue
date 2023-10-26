@@ -5,5 +5,7 @@ inputs: {
 		certificate: string | *"" @tag(cert)
 		private_key: string | *"" @tag(pkey)
 	}
-	admin: secret: string | *"" @tag(admin)
+	admin: {
+		secret: string | *"" @tag(admin)
+	}
 }

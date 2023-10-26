@@ -150,7 +150,10 @@
 
     async function currentTalkId() {
       const inputId = (new URLSearchParams(window.location.search)).get('id').trim();
-      const configId = (await (await fetch('/config/current')).text()).trim();
+      let configId = (await (await fetch('/config/current')).text());
+      if (configId) {
+        configId = configId.trim();
+      }
       return inputId === configId ? inputId : '';
     }
     function currentTalkName() {
