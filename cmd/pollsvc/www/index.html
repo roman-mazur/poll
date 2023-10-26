@@ -18,7 +18,11 @@
     }
 
     .card-action a {
-      margin: 0 20px;
+      margin: 20px;
+    }
+
+    .feedback-block {
+      display: none;
     }
   </style>
 </head>
@@ -29,13 +33,16 @@
     <h1 id="talk-title" class="center">Presentation title</h1>
   </section>
 
-  <section class="poll card blue-grey darken-1">
-    <div class="card-content white-text">
+  <section id="poll" class="poll card blue-grey darken-1">
+    <div class="question-block card-content white-text">
       <h2 class="card-title center" id="question">Do you agree with the speaker?</h2>
       <div class="card-action center">
         <a id="choice-negative" href="#" class="btn-large">No</a>
         <a id="choice-positive" href="#" class="btn-large">Yes</a>
       </div>
+    </div>
+    <div class="feedback-block card-content center white-text">
+      <h2>Thank you. You can vote again in <span class="timer">30</span>s.</h2>
     </div>
   </section>
 
@@ -55,13 +62,15 @@
 
     const deadline = Date.now() + 1000*60*60;
 
+    let initTicker = 0;
+
     function init(talkId) {
-      if (Date.now() >= deadline) {
-        let pollElements = document.getElementsByClassName('poll');
-        for (let i = 0; i < pollElements.length; i++) {
-          pollElements[i].style.display = 'none';
-        }
+      if (!talkId || Date.now() >= deadline) {
+        const pollElement = document.getElementById('poll');
+        pollElement.style.display = 'none';
         document.getElementById('the-end').style.display = 'block';
+        clearInterval(initTicker);
+        return;
       }
 
       const idx = Math.floor(Math.random()*questions.length);
@@ -72,21 +81,57 @@
 
       const choiceNeg = document.getElementById('choice-negative');
       choiceNeg.innerText = variant.neg;
-      choiceNeg.onclick = () => {
-        submitChoice(talkId, 1);
+      choiceNeg.onclick = async () => {
+        await submitChoice(talkId, 1);
+        showFeedback(talkId);
       };
 
       const choicePos = document.getElementById('choice-positive');
       choicePos.innerText = variant.pos;
-      choicePos.onclick = () => {
-        submitChoice(talkId, 10);
+      choicePos.onclick = async () => {
+        await submitChoice(talkId, 10);
+        showFeedback(talkId);
       };
+    }
+
+    const minPeriod = 10000;
+
+    let timerUpdate = 0;
+
+    function showFeedback(talkId) {
+      console.log("Vote submitted. Showing feedback.");
+      const pollElement = document.getElementById('poll');
+      const showQuestion = questionVisible => {
+        if (questionVisible) {
+          window.clearInterval(timerUpdate);
+        }
+        pollElement.getElementsByClassName('question-block')[0].style.display = questionVisible ? 'block' : 'none';
+        pollElement.getElementsByClassName('feedback-block')[0].style.display = questionVisible ? 'none' : 'block';
+      };
+
+      showQuestion(false);
+
+      const duration = minPeriod*2;
+
+      setTimeout(() => {
+        console.log("Showing question again.");
+        showQuestion(true);
+        init(talkId);
+      }, duration);
+
+      const setTimerText = () => {
+        const timeLeft = Math.max(Math.round((lastSubmit + duration - Date.now())/1000), 0);
+        pollElement.getElementsByClassName('timer')[0].innerText = `${timeLeft}`;
+      };
+
+      setTimerText();
+      timerUpdate = setInterval(setTimerText, 1000);
     }
 
     let lastSubmit = 0;
 
     async function submitChoice(talk, val) {
-      if (Date.now() - lastSubmit < 5000) {
+      if (Date.now() - lastSubmit < minPeriod) {
         return;
       }
 
@@ -104,8 +149,9 @@
     }
 
     async function currentTalkId() {
-      const sp = new URLSearchParams(window.location.search);
-      return sp.get('id').trim();
+      const inputId = (new URLSearchParams(window.location.search)).get('id').trim();
+      const configId = (await (await fetch('/config/current')).text()).trim();
+      return inputId === configId ? inputId : '';
     }
     function currentTalkName() {
       const sp = new URLSearchParams(window.location.search);
@@ -123,16 +169,14 @@
     }
 
     currentTalkId().then(id => {
-      if (!id) {
-        return;
-      }
+      const reInit = () => init(id);
 
+      reInit();
       document.getElementById('talk-title').innerText = currentTalkName();
 
-      const reInit = () => init(id);
-      reInit();
-      const period = 1000*60*3;
-      window.setInterval(reInit, period);
+      if (id) {
+        initTicker = window.setInterval(reInit, 1000*60);
+      }
     });
 
   </script>
