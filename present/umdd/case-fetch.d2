@@ -1,0 +1,14 @@
+direction: right
+
+a: Participant
+a.shape: person
+
+p: Presenter
+p.shape: person
+
+s: Server
+s.shape: circle
+
+a -> s: vote
+p -> s: annotate
+p -> s: fetch

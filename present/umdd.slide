@@ -16,7 +16,7 @@ roman@rmazur.io
 
 ## The device
 
-.image poll/zoom-on-poll.png
+.image umdd/zoom-on-poll.png 500 _
 
 ## Be my guest
 
@@ -28,8 +28,31 @@ roman@rmazur.io
 .iframe https://poll.rmazur.io/chart.html 600 1000
 
 ## What's happening
+.image umdd/case-vote.png 600 _
+.caption poll: Use cases
 
-## How do we make it?
+## Presenter adds context
+.image umdd/case-annotate.png 600 _
+
+## Presenter visualizes
+.image umdd/case-fetch.png 600 _
+
+## Use cases summary
+
+- Type of interaction: request/response.
+- 3 types of requests: vote, label (add context), fetch (get aggregated data)
+
+## Putting it into the code
+
+.caption poll: Start coding
+
+: start with JSON, then CUE
+
+## Quickly about CUE
+
+.caption poll: CUE intro
+
+## Constraints example
 
 ## Data: votes
 
@@ -39,3 +62,38 @@ roman@rmazur.io
 ## Data: labels
 
 .code ../votes/structure/data.go /present: label/,/present: label-end/
+
+## Memory requirement
+.caption poll: Deployment
+
+## AWS instance types info
+
+## Selecting a suitable type
+
+## Confirming the free tier
+
+## Deployment with Terraform
+
+## Other examples: k8s pod requirement
+.caption poll: More deployments
+
+## Other examples: size of the OpenSearch data instance
+
+## Other examples: rate limits in WAF config
+
+## Usage model driven development
+.caption poll: UMDD concept
+
+: diagram model -> deployment -> monitoring
+
+## Refinement: memory usage confirmation
+.caption poll: Refinement
+
+## Refinement: request rate review
+
+## What was the talk about?
+.caption poll: Conclusions
+
+- Usage model driven development
+- CUE may help, but it's not the only way
+- Should be perfect for CDKs
