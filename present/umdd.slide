@@ -12,6 +12,7 @@ roman@rmazur.io
 ## Introduction
 
 .image https://detector.media/doc/images/news/archive/2016/165616/i75_ArticleImage_165616.jpg
+
 .caption poll: Introduction
 
 ## The device
@@ -28,7 +29,9 @@ roman@rmazur.io
 .iframe https://poll.rmazur.io/chart.html 600 1000
 
 ## What's happening
+
 .image umdd/case-vote.png 600 _
+
 .caption poll: Use cases
 
 ## Presenter adds context
@@ -46,40 +49,183 @@ roman@rmazur.io
 
 .caption poll: Start coding
 
-: start with JSON, then CUE
+Voting can be done as a REST API call from a web app.
 
-## Quickly about CUE
+Let's imagine how this call will be used... and declare it in JSON.
 
-.caption poll: CUE intro
+.code umdd/use-case-examples.cue /vote-use-case-json/,/vote-use-case-json-end/
 
-## Constraints example
+## Introducing new language: CUE
+
+Now dropping some quotes and commas...
+
+.code umdd/use-case-examples.cue /vote-use-case-cue/,/vote-use-case-cue-end/
+
+## CUE constraints
+
+ ...help to validate the data we write
+
+.code umdd/use-case-examples.cue /constraints-1/,/constraints-1-end/
+
+If we set concurentUsers: **2_000_000** 
+and run **cue vet**, we get
+
+```
+useCase.vote.concurentUsers: invalid value 2000000 (out of bound <=1000000):
+    ./usage.cue:14:23
+    ./usage.cue:9:18
+```
+
+## Adding more constraints
+
+To validate the period value.
+
+.code umdd/use-case-examples.cue /constraints-2/,/constraints-2-end/
+
+## And even more
+
+To limit the fields.
+
+.code umdd/use-case-examples.cue /constraints-3/,/constraints-3-end/
+
+## Back to our use cases
+
+.caption poll: Use cases in code
+
+.code umdd/use-case-examples.cue /all-use-cases/,/all-use-cases-end/
+
+## Derive call per second rate
+
+.code umdd/use-case-examples.cue /call-rate/,/call-rate-end/
+
+Checking...
+```
+$ cue eval -e useCase
+
+vote: CPS:     2.0e+2
+annotate: CPS: 0.08333333333333333333333333333333333
+fetch: CPS:    2.0
+```
+
+*output modified for bravity
+
+## Can we assess the storage?
 
 ## Data: votes
 
 .code ../votes/structure/data.go /present: vote/,/present: vote-end/
+
 .caption poll: Data structures
 
 ## Data: labels
 
 .code ../votes/structure/data.go /present: label/,/present: label-end/
 
+Importing from Go to CUE:
+```
+$ cue get go rmazur.io/poll/votes/structure
+
+ #Label: {
+	talk_name: string    
+	name:      string    
+	timestamp: time.Time 
+ }
+```
+
+## Adding record samples
+
+.code umdd/use-case-examples.cue /label-sample/,/label-sample-end/
+
 ## Memory requirement
-.caption poll: Deployment
+
+.code umdd/use-case-examples.cue /memory-requirement/,/memory-requirement-end/
+
+## Let's summarize
+
+.code umdd/use-case-examples.cue /summary/,/summary-end/
+
+**Voilà!**
+
+```
+$ cue eval -e summary
+
+CPS:    202
+memory: 901
+```
+
+I could keep everything in RAM...
+
+## Roman...
+
+.background umdd/classics.jpg
+
+ ...why are we doing this code?
+
+It's easier this way.
+
+: We put back-of-envelope calculations in code... But why?
+: I sincerely believe that it can be explained only by showing more code.
+
+## K8s Deployment
+
+.caption poll: Plugging the model
+
+We can take the model data into our Kubernetes manifests.
+
+.code umdd/deploy-examples.cue /k8s-deployment/,/k8s-deployment-end/
+
+Then `cue export` and pass to `kubectl apply`.
+
+## Terraform
+ ...or set a constraint on the AWS WAF rate limit rule.
+
+.code umdd/deploy-examples.cue /terraform-waf/,/terraform-waf-end/
+
+## How is the service you use today deployed?
+.caption poll: EC2 Deployment
 
 ## AWS instance types info
+Import AWS EC2 instance types info into CUE.
+```
+aws ec2 describe-instance-types | cue import -f -o itypes_gen.cue -p $pkgName json: -
+
+InstanceTypes: [{
+	InstanceType:      "m6gd.4xlarge"
+	CurrentGeneration: true
+	FreeTierEligible:  false
+	MemoryInfo: SizeInMiB: 65536
+  ...
+}]
+```
 
 ## Selecting a suitable type
 
+.code umdd/deploy-examples.cue /instance-filter/,/instance-filter-end/
+
+Which gives us
+```
+["t4g.nano", "t2.micro", "t3.micro", "t3.nano", "t4g.micro", "t3a.nano", "t2.nano", "t3a.micro"]
+```
+
 ## Confirming the free tier
 
-## Deployment with Terraform
+.code umdd/deploy-examples.cue /free-tier/,/free-tier/
 
-## Other examples: k8s pod requirement
-.caption poll: More deployments
+Which gives us `t3.micro`
 
-## Other examples: size of the OpenSearch data instance
+## Final deployment
 
-## Other examples: rate limits in WAF config
+.code umdd/deploy-examples.cue /final/,/final-end/
+
+## Adjusting the vote use case
+
+Original CPS: 202. But we worry about our t3.micro instance...
+
+.code umdd/use-case-examples.cue /vote-use-case-modified/,/vote-use-case-modified-end/
+
+## Why to code the model?
+
+Reason 1: it may help us to maintain/validate the deployment code.
 
 ## Usage model driven development
 .caption poll: UMDD concept
