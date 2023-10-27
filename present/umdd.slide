@@ -84,7 +84,7 @@ roman@rmazur.io
 ## Usage model driven development
 .caption poll: UMDD concept
 
-.image umdd/umdd-diagram.png
+.image umdd/umdd-diagram.png 600 _
 
 ## Refinement: memory usage confirmation
 .caption poll: Refinement

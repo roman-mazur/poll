@@ -1,8 +1,24 @@
 direction: right
 
-model.shape: circle
-deployment.shape: circle
-monitoring.shape: circle
+model: {
+  shape: circle
+  near: bottom-left
+  width: 150
+  height: 150
+}
+
+deployment: {a
+  shape: circle
+  near: top-center
+  width: 150
+  height: 150
+}
+monitoring: {
+  shape: circle
+  near: bottom-right
+  width: 150
+  height: 150
+}
 
 model -> deployment: shapes
 deployment -> monitoring: exposes model-related metrics
