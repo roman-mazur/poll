@@ -11,7 +11,7 @@ terraform: {
 
 	resource: aws_instance: poll_server: {
 		ami:           "${data.aws_ami.poll_server_ami.id}"
-		instance_type: awsInstanceType.name
+		instance_type: selectedInstanceType.name
 		tags: Name: "pollsvc server"
 		associate_public_ip_address: false
 
@@ -50,8 +50,8 @@ terraform: {
 
 		filter: [
 			{name: "name", values: ["al2023-ami-2023*"]},
-			{name: "virtualization-type", values: awsInstanceType.info.SupportedVirtualizationTypes},
-			{name: "architecture", values: ["x86_64" & or(awsInstanceType.info.ProcessorInfo.SupportedArchitectures)]},
+			{name: "virtualization-type", values: selectedInstanceType.info.SupportedVirtualizationTypes},
+			{name: "architecture", values: ["x86_64" & or(selectedInstanceType.info.ProcessorInfo.SupportedArchitectures)]},
 		]
 		owners: ["amazon"]
 	}

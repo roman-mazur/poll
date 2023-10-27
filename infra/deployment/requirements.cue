@@ -34,10 +34,10 @@ pollSvc: {
 instanceFilter: {
 	CurrentGeneration: true
 	FreeTierEligible:  true
-	MemoryInfo: SizeInMiB: >pollSvc.memReq & <=(pollSvc.memReq * 2)
+	MemoryInfo: SizeInMiB: >model.summary.memory & <=(model.summary.memory * 5)
 }
 
-awsInstanceType: {
+selectedInstanceType: {
 	candidates: [_]
 	candidates: [ for c in eucentral1.InstanceTypes if (c & instanceFilter) != _|_ {c}]
 
