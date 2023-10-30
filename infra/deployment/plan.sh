@@ -10,6 +10,8 @@ admin_secret=$(cat ../../.creds/admin)
 
 cue export -t cert="$poll_cert" -t pkey="$poll_key" -t admin="$admin_secret" -e terraform > out/infra.tf.json
 
+export CLOUDFLARE_API_TOKEN=$(cat ../../.creds/cloudflare)
+
 cd out
 
 terraform init

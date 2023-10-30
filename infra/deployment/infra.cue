@@ -1,19 +1,28 @@
 package deployment
 
 import (
+	"encoding/json"
+
 	// "rmazur.io/cuetf/aws"
 	"rmazur.io/cuetf/cloudflare"
+	"rmazur.io/poll-defs/infra/monitoring"
 )
+
+cwa: monitoring.cwa
+
+awsRegion: "eu-central-1"
 
 terraform: {
 	// aws.#Terraform
-	provider: aws: region: "eu-central-1"
+	provider: aws: region: awsRegion
+
+	#EC2Permissions & {#serverName: "poll_server"}
 
 	resource: aws_instance: poll_server: {
-		ami:           "${data.aws_ami.poll_server_ami.id}"
-		instance_type: selectedInstanceType.name
+		ami:                  "${data.aws_ami.poll_server_ami.id}"
+		iam_instance_profile: "${aws_iam_instance_profile.poll_server.name}"
+		instance_type:        selectedInstanceType.name
 		tags: Name: "pollsvc server"
-		associate_public_ip_address: false
 
 		user_data: """
 		#!/bin/bash
@@ -36,7 +45,13 @@ terraform: {
 		systemctl enable pollsvc
 		systemctl start pollsvc
 
-		echo "poll svc started"
+		echo "poll svc started" >> /opt/init.log
+
+		yum install -y amazon-cloudwatch-agent
+		echo '\(json.Marshal(cwa.config))' > \(cwa.installDir)/bin/config.json
+		\(cwa.installDir)/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:\(cwa.installDir)/bin/config.json
+
+		echo "CWA started" >> /opt/init.log
 		"""
 	}
 
@@ -64,6 +79,43 @@ terraform: {
 			type:    "A"
 			ttl:     1
 			proxied: true
+		}
+	}
+
+	output: poll_server_host_name: value: "${aws_instance.poll_server.private_dns}"
+}
+
+#EC2Permissions: {//aws.Terraform & {
+	#serverName: string
+
+	#assumePolicy: {
+		Version: "2012-10-17"
+		Statement: [{
+			Action: "sts:AssumeRole"
+			Principal: Service: "ec2.amazonaws.com"
+			Effect: "Allow"
+		}]
+	}
+
+	resource: aws_iam_role: {
+		(#serverName): {
+			name:               #serverName
+			path:               "/system/"
+			assume_role_policy: json.Marshal(#assumePolicy)
+			description:        "Role for \(#serverName)"
+		}
+	}
+	resource: aws_iam_role_policy_attachment: {
+		"\(#serverName)-cwa": {
+			role:       "${aws_iam_role.\(#serverName).name}"
+			policy_arn: "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+		}
+	}
+	resource: aws_iam_instance_profile: {
+		(#serverName): {
+			name: #serverName
+			role: "${aws_iam_role.\(#serverName).name}"
+			path: "/system/"
 		}
 	}
 }
