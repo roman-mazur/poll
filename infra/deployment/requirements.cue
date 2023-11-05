@@ -6,7 +6,7 @@ import (
 )
 
 pollSvc: {
-	version:      "v0.0.5"
+	version:      "v0.0.6"
 	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-amd64"
 	memReq:       model.summary.req.memMB
 
