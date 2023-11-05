@@ -336,7 +336,7 @@ function enableSlideFrames(no) {
 }
 
 function disableFrame(frame) {
-  frame.src = 'about:blank';
+  // frame.src = 'about:blank';
 }
 
 function enableFrame(frame) {

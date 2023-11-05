@@ -150,6 +150,7 @@ $ cue get go rmazur.io/poll/votes/structure
 $ cue eval -e summary
 
 CPS:    202
+
 memory: 901
 ```
 
@@ -159,9 +160,7 @@ I could keep everything in RAM...
 
 .background umdd/classics.jpg
 
- ...why are we doing this code?
-
-It's easier this way.
+.html umdd/envelope.html
 
 : We put back-of-envelope calculations in code... But why?
 : I sincerely believe that it can be explained only by showing more code.
@@ -181,8 +180,9 @@ Then `cue export` and pass to `kubectl apply`.
 
 .code umdd/deploy-examples.cue /terraform-waf/,/terraform-waf-end/
 
-## How is the service you use today deployed?
 .caption poll: EC2 Deployment
+
+## How is the service you use today deployed?
 
 ## AWS instance types info
 Import AWS EC2 instance types info into CUE.
@@ -204,7 +204,10 @@ InstanceTypes: [{
 
 Which gives us
 ```
-["t4g.nano", "t2.micro", "t3.micro", "t3.nano", "t4g.micro", "t3a.nano", "t2.nano", "t3a.micro"]
+[
+  "t4g.nano", "t2.micro", "t3.micro", "t3.nano", 
+  "t4g.micro", "t3a.nano", "t2.nano", "t3a.micro"
+]
 ```
 
 ## Confirming the free tier
@@ -219,13 +222,15 @@ Which gives us `t3.micro`
 
 ## Adjusting the vote use case
 
-Original CPS: 202. But we worry about our t3.micro instance...
+Original CPS: 202. 
+
+But we worry about our t3.micro instance...
 
 .code umdd/use-case-examples.cue /vote-use-case-modified/,/vote-use-case-modified-end/
 
 ## Why to code the model?
 
-Reason 1: it may help us to maintain/validate the deployment code.
+Reason 1: it may help us to **maintain/validate the deployment code.**
 
 ## Usage model driven development
 .caption poll: UMDD concept
@@ -235,7 +240,20 @@ Reason 1: it may help us to maintain/validate the deployment code.
 ## Refinement: memory usage confirmation
 .caption poll: Refinement
 
-## Refinement: request rate review
+.code umdd/deploy-examples.cue /memory-stats/,/memory-stats-end/
+.code umdd/deploy-examples.cue /memory-output/,/memory-output-end/
+
+## Refinement: constraints on the memory stats
+
+ ... help us understand if the real system behaviour still matches our model 
+
+.code umdd/deploy-examples.cue /memory-check/,/memory-check-end/
+
+## Why to code the model?
+
+Reason 1: it may help us to maintain/validate the deployment code.
+
+Reason 2: it gives us a formal way **to confirm if the design matches the real world.**
 
 ## What was the talk about?
 .caption poll: Conclusions
@@ -243,3 +261,5 @@ Reason 1: it may help us to maintain/validate the deployment code.
 - Usage model driven development
 - CUE may help, but it's not the only way
 - Should be perfect for CDKs
+
+.image umdd/umdd-diagram.png 400 _

@@ -33,7 +33,7 @@ instanceFilter: {
 	MemoryInfo: SizeInMiB: >model.summary.memory & <=(model.summary.memory * 2) // HL
 }
 
-selectedInstance: {
+selectedInstance: { // HL
 	candidates: [ for c in InstanceTypes if (c & instanceFilter) != _|_ {c}]
 
 	info:     candidates[0]
@@ -60,8 +60,51 @@ data: aws_ami: poll_server_ami: {
 
 	filter: [
 		{name: "name", values: ["al2023-ami-2023*"]},
-		{name: "virtualization-type", values: selectedInstanceType.info.SupportedVirtualizationTypes},
+		{
+			name: "virtualization-type"
+			values: selectedInstanceType.info.SupportedVirtualizationTypes
+		},
 	]
 	owners: ["amazon"]
 }
 // final-end OMIT
+
+memoryMetricCode: """
+memory-stats, OMIT
+aws cloudwatch get-metric-statistics --metric-name=mem_used_percent \ // HL
+		--namespace=CWAgent \
+		--statistics=Maximum --dimensions Name=host,Value=$hostname \
+		--start-time "2023-11-09T08:00:00" --end-time "2023-11-10T20:00:00"
+memory-stats-end, OMIT
+"""
+
+// memory-output OMIT
+outputs: memory: {
+	Label: "mem_used_percent"
+	Datapoints: [{
+		Timestamp: "2023-11-09T18:24:00+00:00"
+		Maximum:   19.663855173832545 // HL
+		Unit:      "Percent"
+	}, {
+		Timestamp: "2023-11-09T20:24:00+00:00"
+		Maximum:   19.637523143386133
+		Unit:      "Percent"
+	}]
+}
+// memory-output-end OMIT
+
+// memory-check OMIT
+import (
+	"rmazur.io/poll-defs/infra/deployment"
+	"rmazur.io/poll-defs/infra/model"
+)
+
+// Actual memory usage should be less than predicted by the model.
+outputs: memory: Datapoints: [...{
+
+	#instanceMem: deployment.selectedInstanceType.info.MemoryInfo.SizeInMiB
+	#modelMax: model.summary.memory / #instanceMem  * 100
+
+	Maximum: <= #modelMax // HL
+}]
+// memory-check-end OMIT

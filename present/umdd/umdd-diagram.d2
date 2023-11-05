@@ -7,7 +7,7 @@ model: {
   height: 150
 }
 
-deployment: {a
+deployment: {
   shape: circle
   near: top-center
   width: 150
@@ -20,6 +20,14 @@ monitoring: {
   height: 150
 }
 
-model -> deployment: shapes
-deployment -> monitoring: exposes model-related metrics
-monitoring -> model: refines
+model -> deployment: shapes {
+  style: {
+    stroke-width: 5
+  }
+}
+deployment -> monitoring: exposes\nmodel-related metrics
+monitoring -> model: refines {
+  style: {
+    stroke-width: 5
+  }
+}

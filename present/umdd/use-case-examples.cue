@@ -70,9 +70,12 @@ useCase: [name=string]: close({
 // call-rate-end OMIT
 
 // label-sample OMIT
-useCase: label: recordSample: structure.#Label & {
+useCase: annotate: recordSample: structure.#Label & {
+
 	talk_name: strings.Join(list.Repeat(["x"], 80), "")
+
 	timestamp: "2022-02-24T03:00:00Z"
+
 	name:      strings.Join(list.Repeat(["x"], 50), "")
 }
 // label-sample-end OMIT
@@ -87,7 +90,9 @@ useCase: [name=string]: close({
 	recordSample: _
 	recordSize:   len(json.Marshal(recordSample)) // HL
 
-	memory: time.ParseDuration(eventDuration) / time.ParseDuration(submitPeriod) * concurentUsers * recordSize
+	_recordCount: time.ParseDuration(eventDuration) / time.ParseDuration(submitPeriod) * concurentUsers
+
+	memory: _recordCount * recordSize // HL
 })
 // memory-requirement-end OMIT
 
