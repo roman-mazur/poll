@@ -58,6 +58,10 @@ useCase: {
 		concurentUsers: annotate.concurentUsers
 	}
 }
+useCase: [name=string]: close({
+	submitPeriod:   string & time.Duration
+	concurentUsers: >0 & <=1_000_000
+})
 // all-use-cases-end OMIT
 
 // call-rate OMIT
