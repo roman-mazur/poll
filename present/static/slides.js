@@ -205,6 +205,7 @@ function updateSlides() {
 }
 
 function prevSlide() {
+  jumpSlide = -1;
   hideHelpText();
   if (curSlide > 0) {
     curSlide--;
@@ -216,6 +217,7 @@ function prevSlide() {
 }
 
 function nextSlide() {
+  jumpSlide = -1;
   hideHelpText();
   if (curSlide < slideEls.length - 1) {
     curSlide++;

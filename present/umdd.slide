@@ -1,13 +1,15 @@
 # How much resources I need?
 Usage model driven development
-17 Oct 2023
+10 Nov 2023
 Tags: architecture, usage model
 Summary: We'll review the idea of defining the system usage model in code using the CUE language and see how it can be used to derive the Terraform configuration.
 
 Roman Mazur
 Team lead, Ubisoft
+
 roman@rmazur.io
-@roman_mazur
+
+X: @roman_mazur
 
 ## Introduction
 
@@ -43,7 +45,7 @@ roman@rmazur.io
 ## Use cases summary
 
 - Type of interaction: request/response.
-- 3 types of requests: vote, label (add context), fetch (get aggregated data)
+- 3 types of requests: vote, annotate (add labels), fetch (get aggregated data)
 
 ## Putting it into the code
 
@@ -235,7 +237,7 @@ Reason 1: it may help us to **maintain/validate the deployment code.**
 ## Usage model driven development
 .caption poll: UMDD concept
 
-.image umdd/umdd-diagram.png 600 _
+.image umdd/umdd-diagram.png 550 _
 
 ## Refinement: memory usage confirmation
 .caption poll: Refinement
@@ -261,5 +263,6 @@ Reason 2: it gives us a formal way **to confirm if the design matches the real w
 - Usage model driven development
 - CUE may help, but it's not the only way
 - Should be perfect for CDKs
+- Code on GitHub: [github.com/roman-mazur/poll](github.com/roman-mazur/poll)
 
-.image umdd/umdd-diagram.png 400 _
+.image umdd/umdd-diagram.png 350 _
