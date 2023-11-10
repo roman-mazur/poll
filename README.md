@@ -12,6 +12,9 @@ This repo is also a [CUE](https://cuelang.org) module. Package `infra` contains 
 service usage model expressed in CUE (see `infra/model`), as well as the deployment code (see `infra/deployment`)
 configured with the parameters derived from the usage model.
 
+Folder `present` contains the presentation on the usage model driven development that can be launched using a tool
+with the same name [from the Go x/tools repository](https://pkg.go.dev/golang.org/x/tools/present).
+
 ## Dealing with the infra
 
 To deploy:
