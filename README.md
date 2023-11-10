@@ -11,3 +11,24 @@ presentation.
 This repo is also a [CUE](https://cuelang.org) module. Package `infra` contains the definition of the 
 service usage model expressed in CUE (see `infra/model`), as well as the deployment code (see `infra/deployment`)
 configured with the parameters derived from the usage model.
+
+## Dealing with the infra
+
+To deploy:
+```
+cd infra/deployment
+./plan.sh
+./deploy.sh
+```
+
+To confirm the deployment matches the usage model constraints:
+```
+cd infra/deployment/state
+./check.sh
+```
+
+## Usage model driven development
+
+TODO: Add references.
+
+![diagram](present/umdd/umdd-diagram.png)
