@@ -1,6 +1,6 @@
 # How much resources I need?
 Usage model driven development
-10 Nov 2023
+23 Dec 2023
 Tags: architecture, usage model
 Summary: We'll review the idea of defining the system usage model in code using the CUE language and see how it can be used to derive the Terraform configuration.
 
