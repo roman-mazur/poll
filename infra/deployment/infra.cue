@@ -68,11 +68,12 @@ terraform: {
 		domain:   "vpc"
 	}
 
+	#amazonLinuxVersion: "2023"
 	data: aws_ami: poll_server_ami: {
 		most_recent: true
 
 		filter: [
-			{name: "name", values: ["al2023-ami-2023*"]},
+			{name: "name", values: ["al\(#amazonLinuxVersion)-ami-\(#amazonLinuxVersion)*"]},
 			{name: "virtualization-type", values: selectedInstanceType.info.SupportedVirtualizationTypes},
 			{name: "architecture", values: ["x86_64" & or(selectedInstanceType.info.ProcessorInfo.SupportedArchitectures)]},
 		]
