@@ -1,11 +1,11 @@
-# How much resources I need?
+# How much resources I need?..
 Usage model driven development
-23 Dec 2023
+
 Tags: architecture, usage model
 Summary: We'll review the idea of defining the system usage model in code using the CUE language and see how it can be used to derive the Terraform configuration.
 
 Roman Mazur
-Team lead, Ubisoft
+Project lead, Ubisoft
 
 roman@rmazur.io
 
@@ -191,6 +191,8 @@ Import AWS EC2 instance types info into CUE.
 
 .code umdd/aws-instances-import.txt
 
+ *examples of such import are also collected in [github.com/roman-mazur/cuetf](https://github.com/roman-mazur/cuetf)
+
 ## Selecting a suitable type
 
 .code umdd/deploy-examples.cue /instance-filter/,/instance-filter-end/
@@ -218,6 +220,18 @@ Which gives us `t3.micro`
 Original CPS: 202. 
 
 But we worry about our t3.micro instance...
+
+.code umdd/use-case-examples.cue /summary-limited-cps/,/summary-limited-cps-end/
+
+```
+summary.CPS: invalid value 202 (out of bound <=60):
+    ./usage.cue:63:12
+    ./usage.cue:64:7
+```
+
+## Adjusted vote use case
+
+Changing the vote frequency allowed to the audience:
 
 .code umdd/use-case-examples.cue /vote-use-case-modified/,/vote-use-case-modified-end/
 

@@ -108,6 +108,13 @@ summary: {
 }
 // summary-end OMIT
 
+// summary-limited-cps OMIT
+summary: {
+	CPS: math.Round(list.Sum([for uc in useCase { uc.CPS }]))
+	CPS: <=60 // HL
+}
+// summary-limited-cps-end OMIT
+
 // vote-use-case-modified OMIT
 summary: CPS: <=60 // HL
 

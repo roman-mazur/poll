@@ -1,0 +1,10 @@
+aws ec2 describe-instance-types \
+        | cue import -f -o itypes_gen.cue -p $pkgName json: - // HL
+
+InstanceTypes: [{
+	InstanceType:      "m6gd.4xlarge"
+	CurrentGeneration: true
+	FreeTierEligible:  false
+	MemoryInfo: SizeInMiB: 65536
+  ...
+}]
