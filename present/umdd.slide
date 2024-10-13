@@ -235,9 +235,15 @@ Changing the vote frequency allowed to the audience:
 
 .code umdd/use-case-examples.cue /vote-use-case-modified/,/vote-use-case-modified-end/
 
+## Don't forget to vote
+
+.image umdd/voter-ui.jpg 550 _
+
 ## Why to code the model?
 
 Reason 1: it may help us to **maintain/validate the deployment code.**
+
+.image umdd/umdd-diagram-intro.png 600 _
 
 ## Usage model driven development
 .caption poll: UMDD concept
