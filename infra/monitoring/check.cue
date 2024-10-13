@@ -17,10 +17,11 @@ import "time"
 
 	#output: {
 		Label: "mem_used_percent"
-		Datapoints: [...{
+		Datapoints: [#datapoint, ...#datapoint]
+		#datapoint: {
 			Timestamp: time.Time & string
 			Maximum:   float64
 			Unit:      "Percent"
-		}]
+		}
 	}
 }
