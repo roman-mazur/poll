@@ -15,16 +15,16 @@ import (
 // HTTPHandler provides a REST API handler for the votes data management.
 func HTTPHandler(repo *Repository) http.Handler {
 	mux := http.NewServeMux()
-	mux.Handle("/votes", adapt(method("POST", process(repo.Vote))))
-	mux.Handle("/labels", adapt(method("POST", process(repo.Label))))
+	mux.Handle("POST /votes", adapt(process(repo.Vote)))
+	mux.Handle("POST /labels", adapt(process(repo.Label)))
 
-	mux.Handle("/talk-data/", adapt(method("GET", func(r *http.Request) (any, error) {
+	mux.Handle("GET /talk-data/", adapt(func(r *http.Request) (any, error) {
 		talkId, _ := url.PathUnescape(path.Base(r.URL.EscapedPath()))
 		if talkId == "" {
 			return nil, &clientError{Msg: "no talk ID"}
 		}
 		return repo.Aggregate(talkId), nil
-	})))
+	}))
 	return mux
 }
 
@@ -71,15 +71,6 @@ func adapt(f handler) http.Handler {
 		}
 		_ = json.NewEncoder(rw).Encode(data)
 	})
-}
-
-func method(m string, f handler) handler {
-	return func(r *http.Request) (any, error) {
-		if r.Method != m {
-			return nil, &clientError{status: http.StatusMethodNotAllowed, Msg: "wrong verb"}
-		}
-		return f(r)
-	}
 }
 
 type clientError struct {

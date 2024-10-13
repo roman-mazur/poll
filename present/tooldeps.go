@@ -1,6 +1,6 @@
 //go:build tooldeps
 
-package infra
+package present
 
 import (
 	_ "golang.org/x/tools/cmd/present"

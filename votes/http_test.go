@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
 	"time"
 )
@@ -91,4 +92,19 @@ func TestHTTPHandler(t *testing.T) {
 		}
 	})
 
+	t.Run("validation", func(t *testing.T) {
+		vote := Vote{
+			TalkName:  talkName,
+			Timestamp: ts,
+			VoterId:   "some-voter-id",
+			Value:     11,
+		}
+		err := submit(srv.URL+"/votes", vote)
+		if err == nil {
+			t.Fatal("error was expected")
+		}
+		if !strings.Contains(err.Error(), "400") {
+			t.Errorf("unexpected error message: %s", err)
+		}
+	})
 }
