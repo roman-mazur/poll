@@ -32,7 +32,7 @@ useCase: {
 		recordSample: structure.#Label & {
 			talk_name: _talkNameSample
 			timestamp: "2022-02-24T03:00:00Z"
-			name:      strings.Join(list.Repeat(["x"], 50), "")
+			name: strings.Join(list.Repeat(["x"], 50), "")
 		}
 	}
 
@@ -61,7 +61,7 @@ useCase: [name=string]: close({
 
 summary: {
 	CPS: >0 & <=60
-	CPS: math.Round(list.Sum([ for uc in useCase {uc.CPS}]))
+	CPS: math.Round(list.Sum([for uc in useCase {uc.CPS}]))
 
-	memory: math.Round(list.Sum([ for uc in useCase {uc.memory}]) / 1024 / 1024)
+	memory: math.Round(list.Sum([for uc in useCase {uc.memory}]) / 1024 / 1024)
 }

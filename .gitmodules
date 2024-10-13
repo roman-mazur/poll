@@ -1,0 +1,3 @@
+[submodule "cue.mod/pkg/rmazur.io/cuetf"]
+	path = cue.mod/pkg/rmazur.io/cuetf
+	url = https://github.com/roman-mazur/cuetf.git

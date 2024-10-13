@@ -188,17 +188,8 @@ Then `cue export` and pass to `kubectl apply`.
 
 ## AWS instance types info
 Import AWS EC2 instance types info into CUE.
-```
-aws ec2 describe-instance-types | cue import -f -o itypes_gen.cue -p $pkgName json: -
 
-InstanceTypes: [{
-	InstanceType:      "m6gd.4xlarge"
-	CurrentGeneration: true
-	FreeTierEligible:  false
-	MemoryInfo: SizeInMiB: 65536
-  ...
-}]
-```
+.code umdd/aws-instances-import.txt
 
 ## Selecting a suitable type
 

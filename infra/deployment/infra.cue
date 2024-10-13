@@ -3,7 +3,7 @@ package deployment
 import (
 	"encoding/json"
 
-	// "rmazur.io/cuetf/aws"
+	"rmazur.io/cuetf/aws"
 	"rmazur.io/cuetf/cloudflare"
 	"rmazur.io/poll-defs/infra/monitoring"
 )
@@ -13,7 +13,15 @@ cwa: monitoring.cwa
 awsRegion: "eu-central-1"
 
 terraform: {
-	// aws.#Terraform
+	terraform: required_providers: {
+		aws: version: "= 5.71"
+		cloudflare: {
+			source:  "cloudflare/cloudflare"
+			version: "= 4.43.0"
+		}
+	}
+
+	aws.#Terraform
 	provider: aws: region: awsRegion
 
 	#EC2Permissions & {#serverName: "poll_server"}
@@ -75,7 +83,7 @@ terraform: {
 		resource: cloudflare_record: poll_server: {
 			zone_id: "d383a7704b48586d1bc8c2f949712e28"
 			name:    "poll"
-			value:   "${aws_eip.poll_server_ip.public_ip}"
+			content: "${aws_eip.poll_server_ip.public_ip}"
 			type:    "A"
 			ttl:     1
 			proxied: true
@@ -85,7 +93,7 @@ terraform: {
 	output: poll_server_host_name: value: "${aws_instance.poll_server.private_dns}"
 }
 
-#EC2Permissions: {//aws.Terraform & {
+#EC2Permissions: aws.#Terraform & {
 	#serverName: string
 
 	#assumePolicy: {

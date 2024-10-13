@@ -39,7 +39,7 @@ instanceFilter: {
 
 selectedInstanceType: {
 	candidates: [_]
-	candidates: [ for c in eucentral1.InstanceTypes if (c & instanceFilter) != _|_ {c}]
+	candidates: [for c in eucentral1.InstanceTypes if (c & instanceFilter) != _|_ {c}]
 
 	info: candidates[0]
 	name: info.InstanceType
