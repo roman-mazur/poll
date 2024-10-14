@@ -184,6 +184,12 @@ Then `cue export` and pass to `kubectl apply`.
 
 .caption poll: EC2 Deployment
 
+## Why to code the model?
+
+Reason 1: it may help us to **maintain/validate the deployment code.**
+
+.image umdd/umdd-diagram-intro.png 600 _
+
 ## How is the service you use today deployed?
 
 ## AWS instance types info
@@ -209,7 +215,7 @@ Which gives us
 
 .code umdd/deploy-examples.cue /free-tier/,/free-tier/
 
-Which gives us `t3.micro`
+Which gives us `t2.micro`
 
 ## Final deployment
 
@@ -219,7 +225,7 @@ Which gives us `t3.micro`
 
 Original CPS: 202. 
 
-But we worry about our t3.micro instance...
+But we worry about our t2.micro instance...
 
 .code umdd/use-case-examples.cue /summary-limited-cps/,/summary-limited-cps-end/
 
@@ -238,12 +244,6 @@ Changing the vote frequency allowed to the audience:
 ## Don't forget to vote
 
 .image umdd/voter-ui.jpg 550 _
-
-## Why to code the model?
-
-Reason 1: it may help us to **maintain/validate the deployment code.**
-
-.image umdd/umdd-diagram-intro.png 600 _
 
 ## Usage model driven development
 .caption poll: UMDD concept
