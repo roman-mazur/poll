@@ -33,11 +33,11 @@ instanceFilter: {
 	MemoryInfo: SizeInMiB: >model.summary.memory & <=(model.summary.memory * 2) // HL
 }
 
-selectedInstance: { // HL
-	candidates: [ for c in InstanceTypes if (c & instanceFilter) != _|_ {c}]
+selectedInstanceType: { // HL
+	candidates: [for c in eucentral1.InstanceTypes if (c & instanceFilter) != _|_ {c}]
 
-	info:     candidates[0]
-	typeName: info.InstanceType
+	info: candidates[0]
+	name: info.InstanceType
 }
 // instance-filter-end OMIT
 
@@ -74,7 +74,7 @@ memory-stats, OMIT
 aws cloudwatch get-metric-statistics --metric-name=mem_used_percent \ // HL
 		--namespace=CWAgent \
 		--statistics=Maximum --dimensions Name=host,Value=$hostname \
-		--start-time "2023-11-09T08:00:00" --end-time "2023-11-10T20:00:00"
+		--start-time "2024-10-14T08:00:00" --end-time "2024-10-14T20:00:00"
 memory-stats-end, OMIT
 """
 
@@ -82,11 +82,11 @@ memory-stats-end, OMIT
 outputs: memory: {
 	Label: "mem_used_percent"
 	Datapoints: [{
-		Timestamp: "2023-11-09T18:24:00+00:00"
+		Timestamp: "2024-10-14T18:24:00+00:00"
 		Maximum:   19.663855173832545 // HL
 		Unit:      "Percent"
 	}, {
-		Timestamp: "2023-11-09T20:24:00+00:00"
+		Timestamp: "2024-10-14T19:24:00+00:00"
 		Maximum:   19.637523143386133
 		Unit:      "Percent"
 	}]

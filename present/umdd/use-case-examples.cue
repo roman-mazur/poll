@@ -21,9 +21,12 @@ useCase: vote: {
 // vote-use-case-cue-end OMIT
 
 // constraints-1 OMIT
+
+// In the same file we can add:
+
 useCase: [name=string]: {
 	submitPeriod:   string
-	concurentUsers: >0 & <=1_000_000
+	concurentUsers: >0 & <=1_000_000 // HL
 }
 // constraints-1-end OMIT
 
