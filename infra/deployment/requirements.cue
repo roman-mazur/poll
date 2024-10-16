@@ -1,14 +1,14 @@
 package deployment
 
 import (
-	"rmazur.io/cuetf/aws/regions/eucentral1"
+	"github.com/roman-mazur/cuetf/aws/regions/eucentral1"
 	"rmazur.io/poll-defs/infra/model"
 )
 
 pollSvc: {
 	version:      "v0.0.6"
 	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-amd64"
-	memReq:       model.summary.req.memMB
+	memReq:       model.summary.memory
 
 	installPath: "/usr/bin/pollsvc"
 	certPath:    "/opt/pollsvc"
@@ -34,7 +34,7 @@ pollSvc: {
 instanceFilter: {
 	CurrentGeneration: true
 	FreeTierEligible:  true
-	MemoryInfo: SizeInMiB: >model.summary.memory & <=(model.summary.memory * 5)
+	MemoryInfo: SizeInMiB: >pollSvc.memReq & <=(pollSvc.memReq * 5)
 }
 
 selectedInstanceType: {

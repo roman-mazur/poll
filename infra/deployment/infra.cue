@@ -3,8 +3,8 @@ package deployment
 import (
 	"encoding/json"
 
-	"rmazur.io/cuetf/aws"
-	"rmazur.io/cuetf/cloudflare"
+	"github.com/roman-mazur/cuetf/aws"
+	"github.com/roman-mazur/cuetf/cloudflare"
 	"rmazur.io/poll-defs/infra/monitoring"
 )
 
