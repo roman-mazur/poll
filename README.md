@@ -32,6 +32,8 @@ cd infra/deployment/state
 
 ## Usage model driven development
 
-TODO: Add references.
-
 ![diagram](present/umdd/umdd-diagram.png)
+
+
+### Presentation video:
+[![YT link](http://img.youtube.com/vi/IQ7l7AR0V5Y/0.jpg)](http://www.youtube.com/watch?v=IQ7l7AR0V5Y)
