@@ -59,8 +59,8 @@ Let's imagine how this call will be used... and declare it in JSON.
 
 .code umdd/use-case-examples.cue /vote-use-case-json/,/vote-use-case-json-end/
 
-// We understand that this can be implemented as a web application.
-// Let's try to reason about the resources needed by this app.
+: We understand that this can be implemented as a web application.
+: Let's try to reason about the resources needed by this app.
 
 ## Introducing new language: CUE
 
@@ -68,7 +68,7 @@ Now dropping some quotes and commas...
 
 .code umdd/use-case-examples.cue /vote-use-case-cue/,/vote-use-case-cue-end/
 
-// Feel free to take a moment to Google it. But please come back to our web app.
+: Feel free to take a moment to Google it. But please come back to our web app.
 
 ## CUE constraints
 
@@ -103,7 +103,7 @@ To limit the fields.
 
 .code umdd/use-case-examples.cue /all-use-cases/,/all-use-cases-end/
 
-// What we get is the structured data giving the quantitative characteristics to our use cases. 
+: What we get is the structured data giving the quantitative characteristics to our use cases. 
 
 ## Derive call per second rate
 
@@ -120,7 +120,7 @@ fetch: CPS:    2.0
 
 *output modified for brevity
 
-// Use cases data is now augmented with the information on the upper limit of CPS.
+: Use cases data is now augmented with the information on the upper limit of CPS.
 
 ## Can we assess the storage?
 
@@ -149,7 +149,7 @@ $ cue get go rmazur.io/poll/votes/structure
 
 .code umdd/use-case-examples.cue /label-sample/,/label-sample-end/
 
-// We augment the use cases data with the samples of the stored records. 
+: We augment the use cases data with the samples of the stored records. 
 
 ## Memory requirement
 
