@@ -7,6 +7,6 @@ source: {
 }
 deps: {
 	"github.com/roman-mazur/cuetf@v0": {
-		v: "v0.0.1"
+		v: "v0.1.0"
 	}
 }

@@ -1,7 +1,7 @@
 package umdd
 
 // k8s-deployment OMIT
-import "rmazur.io/poll-defs/model" // HL
+import "rmazur.io/poll-defs/infra/model" // HL
 
 k8s: deployment: {
 	kind: "Deployment"
