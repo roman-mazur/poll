@@ -2,6 +2,8 @@ module rmazur.io/poll
 
 go 1.25
 
+tool cuelang.org/go/cmd/cue
+
 require (
 	cuelang.org/go v0.14.1
 	golang.org/x/tools v0.37.0
