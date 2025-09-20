@@ -21,4 +21,6 @@ jobs:
           go install cuelang.org/go/cmd/cue
           go test ./...
       - name: Evaluate infra code
-        run: cue export -e terraform ./infra/deployment --out cue
+        run: |-
+          go generate ./infra/...
+          cue export -e terraform ./infra/deployment --out cue

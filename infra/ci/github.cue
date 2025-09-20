@@ -18,17 +18,26 @@ github: workflows: main: {
 		steps: [
 			{name: "Checkout", uses: "actions/checkout@v4"},
 			{name: "Set up Go", uses: "actions/setup-go@v4", with: "go-version": "1.25.1"},
-			{
+			#multilineRun & {
 				name: "Test"
-				run: strings.Join([
+				#lines: [
 					"go install cuelang.org/go/cmd/cue",
 					"go test ./...",
-				], "\n")
+				]
 			},
-			{
+			#multilineRun & {
 				name: "Evaluate infra code"
-				run:  "cue export -e terraform ./infra/deployment --out cue"
+				#lines:  [
+					"go generate ./infra/...",
+					"cue export -e terraform ./infra/deployment --out cue",
+				]
 			},
 		]
 	}
+}
+
+#multilineRun: {
+	name: string
+	#lines: [...string]
+	run: strings.Join(#lines, "\n")
 }
