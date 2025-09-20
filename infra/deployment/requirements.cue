@@ -6,8 +6,9 @@ import (
 )
 
 pollSvc: {
-	version:      "v0.0.6"
-	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-amd64"
+	version:      "v0.0.7"
+	arch: selectedInstanceType.info.ProcessorInfo.SupportedArchitectures[0]
+	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-\(arch)"
 	memReq:       model.summary.memory
 
 	installPath: "/usr/bin/pollsvc"
@@ -38,7 +39,6 @@ instanceFilter: {
 }
 
 selectedInstanceType: {
-	candidates: [_]
 	candidates: [for c in eucentral1.InstanceTypes if (c & instanceFilter) != _|_ {c}]
 
 	info: candidates[0]

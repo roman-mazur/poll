@@ -14,10 +14,10 @@ awsRegion: "eu-central-1"
 
 terraform: {
 	terraform: required_providers: {
-		aws: version: "= 5.71"
+		aws: version: "= 6.14.0"
 		cloudflare: {
 			source:  "cloudflare/cloudflare"
-			version: "= 4.43.0"
+			version: "= 5.10.1"
 		}
 	}
 
@@ -75,13 +75,13 @@ terraform: {
 		filter: [
 			{name: "name", values: ["al\(#amazonLinuxVersion)-ami-\(#amazonLinuxVersion)*"]},
 			{name: "virtualization-type", values: selectedInstanceType.info.SupportedVirtualizationTypes},
-			{name: "architecture", values: ["x86_64" & or(selectedInstanceType.info.ProcessorInfo.SupportedArchitectures)]},
+			{name: "architecture", values: selectedInstanceType.info.ProcessorInfo.SupportedArchitectures},
 		]
 		owners: ["amazon"]
 	}
 
 	cloudflare.#Terraform & {
-		resource: cloudflare_record: poll_server: {
+		resource: cloudflare_dns_record: poll_server: {
 			zone_id: "d383a7704b48586d1bc8c2f949712e28"
 			name:    "poll"
 			content: "${aws_eip.poll_server_ip.public_ip}"
