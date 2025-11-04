@@ -13,15 +13,14 @@ cwa: monitoring.cwa
 awsRegion: "eu-central-1"
 
 terraform: {
+	aws.#Terraform
+	cloudflare.#Terraform
+
 	terraform: required_providers: {
-		aws: version: "= 6.14.0"
-		cloudflare: {
-			source:  "cloudflare/cloudflare"
-			version: "= 5.10.1"
-		}
+		aws:        _
+		cloudflare: _
 	}
 
-	aws.#Terraform
 	provider: aws: region: awsRegion
 
 	#EC2Permissions & {#serverName: "poll_server"}
@@ -80,15 +79,13 @@ terraform: {
 		owners: ["amazon"]
 	}
 
-	cloudflare.#Terraform & {
-		resource: cloudflare_dns_record: poll_server: {
-			zone_id: "d383a7704b48586d1bc8c2f949712e28"
-			name:    "poll"
-			content: "${aws_eip.poll_server_ip.public_ip}"
-			type:    "A"
-			ttl:     1
-			proxied: true
-		}
+	resource: cloudflare_dns_record: poll_server: {
+		zone_id: "d383a7704b48586d1bc8c2f949712e28"
+		name:    "poll"
+		content: "${aws_eip.poll_server_ip.public_ip}"
+		type:    "A"
+		ttl:     1
+		proxied: true
 	}
 
 	output: poll_server_host_name: value: "${aws_instance.poll_server.private_dns}"
