@@ -2,9 +2,11 @@ package ci
 
 import (
 	"strings"
+
+	"cue.dev/x/githubactions"
 )
 
-github: workflows: [n=string]: {name: n}
+github: workflows: [n=string]: githubactions.#Workflow & {name: n}
 
 github: workflows: main: {
 
@@ -17,7 +19,7 @@ github: workflows: main: {
 		"runs-on": "ubuntu-latest"
 		steps: [
 			{name: "Checkout", uses: "actions/checkout@v4"},
-			{name: "Set up Go", uses: "actions/setup-go@v4", with: "go-version": "1.25.1"},
+			{name: "Set up Go", uses: "actions/setup-go@v4", with: "go-version": "1.25.3"},
 			#multilineRun & {
 				name: "Test"
 				#lines: [
