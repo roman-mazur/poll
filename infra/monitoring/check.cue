@@ -31,7 +31,5 @@ import "time"
 
 	cmd: ["curl", "https://\(#addr)/ping"]
 
-	#output: close({
-		version: string
-	})
+	#output: version: string
 }

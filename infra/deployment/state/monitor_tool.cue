@@ -10,7 +10,7 @@ import (
 command: check: {
 	for name, command in checks {
 		(name): {
-			log: cli.Print & {text: "Performing check [\(name)]"}
+			log: cli.Print & {text: "Importing data for [\(name)]"}
 
 			// Get the data exposed by monitoring.
 			get: exec.Run & {
@@ -24,12 +24,12 @@ command: check: {
 				cmd: ["cue", "import", "-p", "state", "-l", "outputs: \(name):", "-f", "-o", "\(name)_out.cue", "json:", "-"]
 				stdin: get.stdout
 			}
+		}
 
-			// Validate the expectations using cue vet.
-			validate: exec.Run & {
-				$after: check[name]["import"]
-				cmd: ["cue", "vet"]
-			}
+		// Validate the expectations using cue vet.
+		validate: exec.Run & {
+			$after: [for name, _ in checks {check[name]["import"]}]
+			cmd: ["cue", "vet", "-c"]
 		}
 	}
 }

@@ -9,7 +9,6 @@ import (
 checks: {
 	live: monitoring.#ServerLivenessCheck & {
 		#addr: deployData.full_address.value
-		#output: version: deployment.pollSvc.version
 	}
 
 	memory: monitoring.#InstanceMemoryCheck & {
@@ -18,10 +17,8 @@ checks: {
 	}
 }
 
-// Ensure we don't keep sensitive data from Terraform.
-deployData: [string]: sensitive: false
-
-outputs: [name=string]: checks[name].#output
+// Expect the correct version to be deployed.
+outputs: live: version: deployment.pollSvc.version
 
 // Actual memory usage should be less than predicted by the model.
 outputs: memory: Datapoints: [...{
