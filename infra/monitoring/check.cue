@@ -25,3 +25,13 @@ import "time"
 		}
 	}
 }
+
+#ServerLivenessCheck: {
+	#addr: string
+
+	cmd: ["curl", "https://\(#addr)/ping"]
+
+	#output: close({
+		version: string
+	})
+}
