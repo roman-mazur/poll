@@ -63,5 +63,6 @@ summary: {
 	CPS: >0 & <=60
 	CPS: math.Round(list.Sum([for uc in useCase {uc.CPS}]))
 
-	memory: math.Round(list.Sum([for uc in useCase {uc.memory}]) / 1024 / 1024)
+	#memOverheadMB: 15 // Expected memory overhead (Go runtime, etc).
+	memory: math.Round(list.Sum([for uc in useCase {uc.memory}]) / 1024 / 1024) + #memOverheadMB
 }
