@@ -11,6 +11,6 @@ deps: {
 		default: true
 	}
 	"github.com/roman-mazur/cuetf@v0": {
-		v: "v0.5.1"
+		v: "v0.5.2"
 	}
 }
