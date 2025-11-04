@@ -88,7 +88,10 @@ terraform: {
 		proxied: true
 	}
 
-	output: poll_server_host_name: value: "${aws_instance.poll_server.private_dns}"
+	output: {
+		poll_server_host_name: value: "${aws_instance.poll_server.private_dns}"
+		full_address: value:          "${cloudflare_dns_record.poll_server.name}"
+	}
 }
 
 #EC2Permissions: aws.#Terraform & {

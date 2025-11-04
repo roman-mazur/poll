@@ -7,6 +7,11 @@ import (
 )
 
 checks: {
+	live: monitoring.#ServerLivenessCheck & {
+		#addr: deployData.full_address.value
+		#output: version: deployment.pollSvc.version
+	}
+
 	memory: monitoring.#InstanceMemoryCheck & {
 		#region:   deployment.awsRegion
 		#hostname: deployData.poll_server_host_name.value

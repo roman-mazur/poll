@@ -1,7 +1,14 @@
 package state
 
-deployData: poll_server_host_name: {
-	sensitive: false
-	type:      "string"
-	value:     "ip-172-31-43-247.eu-central-1.compute.internal"
+deployData: {
+	full_address: {
+		sensitive: false
+		type:      "string"
+		value:     "poll.rmazur.io"
+	}
+	poll_server_host_name: {
+		sensitive: false
+		type:      "string"
+		value:     "ip-172-31-43-247.eu-central-1.compute.internal"
+	}
 }
