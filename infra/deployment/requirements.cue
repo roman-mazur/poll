@@ -6,7 +6,7 @@ import (
 )
 
 pollSvc: {
-	version:      "v0.0.7"
+	version:      "v0.0.8"
 	arch:         selectedInstanceType.info.ProcessorInfo.SupportedArchitectures[0]
 	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-\(arch)"
 	memReq:       model.summary.memory
