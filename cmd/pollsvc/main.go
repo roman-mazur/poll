@@ -10,6 +10,7 @@ import (
 	"crypto/sha256"
 	"embed"
 	"encoding/hex"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/fs"
@@ -17,6 +18,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -55,11 +57,7 @@ Possible flags are below.
 
 	var tc talkConfig
 
-	http.HandleFunc("/config/new", func(rw http.ResponseWriter, r *http.Request) {
-		if r.Method != "POST" {
-			rw.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
+	http.HandleFunc("POST /config/new", func(rw http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("authorization") != *adminSecret {
 			rw.WriteHeader(http.StatusForbidden)
 			return
@@ -73,9 +71,23 @@ Possible flags are below.
 		_, _ = rw.Write([]byte(tc.CurrentId()))
 	})
 
-	http.Handle("/config/current", cors(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+	http.Handle("GET /config/current", cors(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		rw.WriteHeader(http.StatusOK)
 		_, _ = rw.Write([]byte(tc.CurrentId()))
+	})))
+
+	buildInfo, buildInfoOk := debug.ReadBuildInfo()
+	http.Handle("GET /ping", cors(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		rw.Header().Set("Content-Type", "application/json")
+		rw.WriteHeader(http.StatusOK)
+
+		var data struct {
+			Version string `json:"version"`
+		}
+		if buildInfoOk {
+			data.Version = buildInfo.Main.Version
+		}
+		_ = json.NewEncoder(rw).Encode(&data)
 	})))
 
 	http.Handle("/v1/", http.StripPrefix("/v1", cors(api)))
