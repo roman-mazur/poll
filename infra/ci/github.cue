@@ -27,7 +27,7 @@ github: workflows: main: {
 			},
 			#multilineRun & {
 				name: "Evaluate infra code"
-				#lines:  [
+				#lines: [
 					"go generate ./infra/...",
 					"cue export -e terraform ./infra/deployment --out cue",
 				]
