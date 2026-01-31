@@ -1,32 +1,36 @@
 package votes
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
-	"path"
 
 	"cuelang.org/go/cue/errors"
 	"cuelang.org/go/cuego"
+	"go.opentelemetry.io/otel/metric"
+	"rmazur.io/poll/internal/telemetry"
 )
 
 // HTTPHandler provides a REST API handler for the votes data management.
 func HTTPHandler(repo *Repository) http.Handler {
 	mux := http.NewServeMux()
-	mux.Handle("POST /votes", adapt(process(repo.Vote)))
-	mux.Handle("POST /labels", adapt(process(repo.Label)))
+	mux.Handle("POST /votes", adapt(process(repo.Vote), voteCounter))
+	mux.Handle("POST /labels", adapt(process(repo.Label), labelCounter))
 
-	mux.Handle("GET /talk-data/", adapt(func(r *http.Request) (any, error) {
-		talkId, _ := url.PathUnescape(path.Base(r.URL.EscapedPath()))
-		if talkId == "" {
-			return nil, &clientError{Msg: "no talk ID"}
-		}
-		return repo.Aggregate(talkId), nil
-	}))
+	mux.Handle("GET /talk-data/{talk_id}", adapt(func(r *http.Request) (any, error) {
+		return repo.Aggregate(r.PathValue("talk_id")), nil
+	}, dataCounter))
 	return mux
 }
+
+var (
+	meter        = telemetry.Meter("votes")
+	voteCounter  = must(meter.Int64Counter("operation.vote"))
+	labelCounter = must(meter.Int64Counter("operation.label"))
+	dataCounter  = must(meter.Int64Counter("operation.aggregate"))
+)
 
 func process[T any](f func(T) error) handler {
 	return func(r *http.Request) (any, error) {
@@ -51,8 +55,10 @@ func parse(r *http.Request, out any) error {
 
 type handler func(*http.Request) (any, error)
 
-func adapt(f handler) http.Handler {
+func adapt(f handler, counter metric.Int64Counter) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		counter.Add(context.Background(), 1)
+
 		data, err := f(r)
 		rw.Header().Add("content-type", "application/json")
 		if err != nil {
@@ -81,4 +87,11 @@ type clientError struct {
 
 func (ce *clientError) Error() string {
 	return ce.Msg
+}
+
+func must[T any](v T, err error) T {
+	if err != nil {
+		panic(err)
+	}
+	return v
 }
