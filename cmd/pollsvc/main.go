@@ -7,22 +7,17 @@
 package main
 
 import (
-	"crypto/sha256"
-	"embed"
-	"encoding/hex"
-	"encoding/json"
+	"context"
 	"flag"
 	"fmt"
-	"io/fs"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
-	"runtime/debug"
-	"strings"
-	"sync"
 	"time"
 
+	"rmazur.io/poll/internal/telemetry"
 	"rmazur.io/poll/votes"
 )
 
@@ -30,12 +25,10 @@ var (
 	addr        = flag.String("addr", "127.0.0.1:17000", "Address to listen on")
 	tlsPath     = flag.String("tls", "", "Path to the TLS cert.pem and pkey.pem files that should be used to configure the HTTP server")
 	adminSecret = flag.String("admin-secret", "", "Admin secret to check for the config update")
-
-	//go:embed www
-	www embed.FS
 )
 
 func main() {
+	shutdownCh := shutdownSignal()
 	flag.Usage = func() {
 		_, _ = fmt.Fprintf(flag.CommandLine.Output(), `%s
 
@@ -50,86 +43,51 @@ Possible flags are below.
 	repo := votes.NewRepository()
 	api := votes.HTTPHandler(repo)
 
-	appFS, err := fs.Sub(www, "www")
-	if err != nil {
-		panic(err)
-	}
-
-	var tc talkConfig
-
-	http.HandleFunc("POST /config/new", func(rw http.ResponseWriter, r *http.Request) {
-		if r.Header.Get("authorization") != *adminSecret {
-			rw.WriteHeader(http.StatusForbidden)
-			return
-		}
-
-		key := strings.TrimSpace(r.URL.Query().Get("key"))
-		tc.Setup(key)
-		log.Println("New talk", tc.CurrentId())
-
-		rw.WriteHeader(http.StatusOK)
-		_, _ = rw.Write([]byte(tc.CurrentId()))
-	})
-
-	http.Handle("GET /config/current", cors(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		rw.WriteHeader(http.StatusOK)
-		_, _ = rw.Write([]byte(tc.CurrentId()))
-	})))
-
-	buildInfo, buildInfoOk := debug.ReadBuildInfo()
-	http.Handle("GET /ping", cors(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		rw.Header().Set("Content-Type", "application/json")
-		rw.WriteHeader(http.StatusOK)
-
-		var data struct {
-			Version string `json:"version"`
-		}
-		if buildInfoOk {
-			data.Version = buildInfo.Main.Version
-		}
-		_ = json.NewEncoder(rw).Encode(&data)
-	})))
-
-	http.Handle("/v1/", http.StripPrefix("/v1", cors(api)))
-	http.Handle("/", http.FileServer(http.FS(appFS)))
-
 	server := &http.Server{
 		Addr:           *addr,
-		Handler:        nil,
+		Handler:        buildMux(api),
 		ReadTimeout:    60 * time.Second,
 		WriteTimeout:   120 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	log.Printf("Listening on %s", *addr)
-	if *tlsPath != "" {
-		log.Fatal(server.ListenAndServeTLS(filepath.Join(*tlsPath, "cert.pem"), filepath.Join(*tlsPath, "pkey.pem")))
-	} else {
-		log.Fatal(server.ListenAndServe())
+	serverClosedCh := make(chan error)
+
+	teardownCtx, cancelFunc := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelFunc()
+	defer func() {
+		err := telemetry.Shutdown(teardownCtx)
+		if err != nil {
+			log.Println("Error shutting down telemetry:", err)
+		}
+		log.Println("Shutdown complete")
+	}()
+
+	initReady := make(chan struct{})
+	go func() {
+		var err error
+		log.Printf("Listening on %s", *addr)
+		close(initReady)
+		if *tlsPath != "" {
+			err = server.ListenAndServeTLS(filepath.Join(*tlsPath, "cert.pem"), filepath.Join(*tlsPath, "pkey.pem"))
+		} else {
+			err = server.ListenAndServe()
+		}
+		serverClosedCh <- err
+	}()
+
+	<-initReady
+	log.Println("Server initialized")
+	select {
+	case <-shutdownCh:
+		log.Println("Shutdown requested")
+		_ = server.Close()
+	case <-serverClosedCh:
 	}
 }
 
-func cors(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		rw.Header().Set("Access-Control-Allow-Origin", "*")
-		h.ServeHTTP(rw, r)
-	})
-}
-
-type talkConfig struct {
-	mu     sync.Mutex
-	talkId string
-}
-
-func (tc *talkConfig) Setup(name string) {
-	tc.mu.Lock()
-	defer tc.mu.Unlock()
-	suffix := sha256.Sum256([]byte(time.Now().String()))
-	tc.talkId = name + "-" + hex.EncodeToString(suffix[:])
-}
-
-func (tc *talkConfig) CurrentId() string {
-	tc.mu.Lock()
-	defer tc.mu.Unlock()
-	return tc.talkId
+func shutdownSignal() chan os.Signal {
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, shutdownSignals...)
+	return signalCh
 }

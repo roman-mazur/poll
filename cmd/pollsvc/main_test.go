@@ -16,12 +16,23 @@ func TestApiHTTP(t *testing.T) {
 	const testSecret = "test"
 	_, addr := chooseAvailablePortTCP()
 	cmd := exec.Command("go", "run", ".", "-addr", addr, "-admin-secret", testSecret)
-	t.Cleanup(func() {
-		_ = cmd.Process.Signal(os.Interrupt)
-	})
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		_ = exec.Command("killall", "pollsvc").Run()
+		t.Log("shutting down", cmd.Process.Pid)
+		err := cmd.Process.Signal(os.Interrupt)
+		if err != nil {
+			t.Log("failed to send interrupt signal:", err)
+		}
+		t.Log("waiting for server shutdown")
+		_, _ = cmd.Process.Wait()
+		t.Log("server exited")
+	})
+
 	waitForReadiness(t, addr)
 	baseUrl := "http://" + addr
 
@@ -67,13 +78,14 @@ func chooseAvailablePortTCP() (int, string) {
 func waitForReadiness(t *testing.T, addr string) {
 	t.Helper()
 	var err error
-	for i := range 5 {
+	for i := range 10 {
 		var conn net.Conn
 		conn, err = net.Dial("tcp", addr)
 		if err == nil {
 			_ = conn.Close()
 			return
 		}
+		t.Log("failed", i+1, err)
 		time.Sleep(100 * time.Millisecond * (1 << i))
 	}
 	t.Fatal(err)
