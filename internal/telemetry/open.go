@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
@@ -76,6 +77,12 @@ func initializeOpenTelemetry() (teardown tearDownFunc, err error) {
 	)
 	allTearDown = append(allTearDown, meterProvider.Shutdown)
 	otel.SetMeterProvider(meterProvider)
+
+	// Emit runtime metrics.
+	if err := runtime.Start(); err != nil {
+		_ = teardown(context.Background())
+		return teardown, err
+	}
 
 	return teardown, nil
 }
