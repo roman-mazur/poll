@@ -8,8 +8,6 @@ import (
 	"rmazur.io/poll-defs/infra/monitoring"
 )
 
-cwa: monitoring.cwa
-
 awsRegion: "eu-central-1"
 
 terraform: {
@@ -54,11 +52,12 @@ terraform: {
 
 		echo "poll svc started" >> /opt/init.log
 
-		yum install -y amazon-cloudwatch-agent
-		echo '\(json.Marshal(cwa.config))' > \(cwa.installDir)/bin/config.json
-		\(cwa.installDir)/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:\(cwa.installDir)/bin/config.json
+		\(monitoring.adot.setupScript)
+		echo "ADOT installed" >> /opt/init.log
 
-		echo "CWA started" >> /opt/init.log
+		echo '\(json.Marshal(monitoring.adot.config))' > \(monitoring.adot.configPath)
+		\(monitoring.adot.ctlCmd) -a start -c \(monitoring.adot.configPath)
+		echo "ADOT started" >> /opt/init.log
 		"""
 	}
 
@@ -106,6 +105,33 @@ terraform: {
 		}]
 	}
 
+	#adotPolicy: {
+		Version: "2012-10-17",
+    Statement: [{
+            "Effect": "Allow",
+            "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:DescribeLogStreams",
+                "logs:DescribeLogGroups",
+                "logs:PutRetentionPolicy",
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
+                "xray:GetSamplingStatisticSummaries",
+                "ssm:GetParameters"
+            ],
+            "Resource": "*"
+    }]
+	}
+
+	resource: aws_iam_policy: "adot-policy": {
+		name: "AWSDistroOpenTelemetryPolicy"
+		policy: json.Marshal(#adotPolicy)
+	}
+
 	resource: aws_iam_role: {
 		(#serverName): {
 			name:               #serverName
@@ -115,9 +141,9 @@ terraform: {
 		}
 	}
 	resource: aws_iam_role_policy_attachment: {
-		"\(#serverName)-cwa": {
+		"\(#serverName)-adot": {
 			role:       "${aws_iam_role.\(#serverName).name}"
-			policy_arn: "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+			policy_arn: "${aws_iam_policy.adot-policy.arn}"
 		}
 	}
 	resource: aws_iam_instance_profile: {

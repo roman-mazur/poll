@@ -3,12 +3,13 @@ package deployment
 import (
 	"github.com/roman-mazur/cuetf/aws/regions/eucentral1"
 	"rmazur.io/poll-defs/infra/model"
+	"rmazur.io/poll-defs/infra/monitoring"
 )
 
 pollSvc: {
-	version:      "v0.0.8"
+	version:      "v0.0.10"
 	arch:         selectedInstanceType.info.ProcessorInfo.SupportedArchitectures[0]
-	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-\(arch)"
+	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-\(arch)-linux"
 	memReq:       model.summary.memory
 
 	installPath: "/usr/bin/pollsvc"
@@ -25,6 +26,7 @@ pollSvc: {
 	Restart=always
 	RestartSec=1
 	User=root
+	Environment="OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:\(monitoring.adot.otlpPort)"
 	ExecStart=\(installPath) --addr=:443 --tls=\(certPath) --admin-secret="\(inputs.admin.secret)"
 
 	[Install]

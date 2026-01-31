@@ -14,5 +14,5 @@ export CLOUDFLARE_API_TOKEN=$(cat ../../.creds/cloudflare)
 
 cd out
 
-terraform init
+terraform init --upgrade
 terraform plan -out deploy-plan
