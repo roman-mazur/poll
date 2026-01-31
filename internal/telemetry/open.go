@@ -10,7 +10,7 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	om "go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -27,7 +27,7 @@ var (
 func init() {
 	buildInfo, buildInfoOk = debug.ReadBuildInfo()
 
-	f, err := initializeOpenTelemetry()
+	f, err := initializeOpenTelemetry(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +42,7 @@ func Meter(name string) om.Meter { return otel.Meter(name) }
 
 type tearDownFunc func(context.Context) error
 
-func initializeOpenTelemetry() (teardown tearDownFunc, err error) {
+func initializeOpenTelemetry(ctx context.Context) (teardown tearDownFunc, err error) {
 	var allTearDown []tearDownFunc
 	teardown = func(ctx context.Context) error {
 		var allErrors []error
@@ -67,7 +67,7 @@ func initializeOpenTelemetry() (teardown tearDownFunc, err error) {
 	}
 
 	// Meter.
-	metricExporter, err := stdoutmetric.New()
+	metricExporter, err := otlpmetrichttp.New(ctx)
 	if err != nil {
 		return teardown, err
 	}
@@ -80,7 +80,7 @@ func initializeOpenTelemetry() (teardown tearDownFunc, err error) {
 
 	// Emit runtime metrics.
 	if err := runtime.Start(); err != nil {
-		_ = teardown(context.Background())
+		_ = teardown(ctx)
 		return teardown, err
 	}
 
