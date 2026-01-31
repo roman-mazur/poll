@@ -106,29 +106,29 @@ terraform: {
 	}
 
 	#adotPolicy: {
-		Version: "2012-10-17",
-    Statement: [{
-            "Effect": "Allow",
-            "Action": [
-                "logs:PutLogEvents",
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:DescribeLogStreams",
-                "logs:DescribeLogGroups",
-                "logs:PutRetentionPolicy",
-                "xray:PutTraceSegments",
-                "xray:PutTelemetryRecords",
-                "xray:GetSamplingRules",
-                "xray:GetSamplingTargets",
-                "xray:GetSamplingStatisticSummaries",
-                "ssm:GetParameters"
-            ],
-            "Resource": "*"
-    }]
+		Version: "2012-10-17"
+		Statement: [{
+			"Effect": "Allow"
+			"Action": [
+				"logs:PutLogEvents",
+				"logs:CreateLogGroup",
+				"logs:CreateLogStream",
+				"logs:DescribeLogStreams",
+				"logs:DescribeLogGroups",
+				"logs:PutRetentionPolicy",
+				"xray:PutTraceSegments",
+				"xray:PutTelemetryRecords",
+				"xray:GetSamplingRules",
+				"xray:GetSamplingTargets",
+				"xray:GetSamplingStatisticSummaries",
+				"ssm:GetParameters",
+			]
+			"Resource": "*"
+		}]
 	}
 
 	resource: aws_iam_policy: "adot-policy": {
-		name: "AWSDistroOpenTelemetryPolicy"
+		name:   "AWSDistroOpenTelemetryPolicy"
 		policy: json.Marshal(#adotPolicy)
 	}
 
