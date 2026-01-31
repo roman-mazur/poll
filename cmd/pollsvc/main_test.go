@@ -40,9 +40,9 @@ func TestApiHTTP(t *testing.T) {
 		t.Errorf("invalid token: %s", token)
 	}
 
-	t.Log(expectHTTPSuccess(t)(http.Get(baseUrl + "/config/current")))
-
 	t.Log(expectHTTPSuccess(t)(http.Get(baseUrl + "/ping")))
+	t.Log(expectHTTPSuccess(t)(http.Get(baseUrl + "/config/current")))
+	t.Log(expectHTTPSuccess(t)(http.Get(baseUrl + "/v1/talk-data/dummy-id")))
 }
 
 func expectHTTPSuccess(t *testing.T) func(resp *http.Response, err error) string {

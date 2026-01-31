@@ -2,12 +2,12 @@ package main
 
 import (
 	"embed"
-	"encoding/json"
 	"io/fs"
 	"log"
 	"net/http"
-	"runtime/debug"
 	"strings"
+
+	"rmazur.io/poll/internal/telemetry"
 )
 
 //go:embed www
@@ -42,19 +42,7 @@ func buildMux(votesRestApi http.Handler) http.Handler {
 		_, _ = rw.Write([]byte(tc.CurrentId()))
 	})))
 
-	buildInfo, buildInfoOk := debug.ReadBuildInfo()
-	httpMux.Handle("GET /ping", relaxCORS(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		rw.Header().Set("Content-Type", "application/json")
-		rw.WriteHeader(http.StatusOK)
-
-		var data struct {
-			Version string `json:"version"`
-		}
-		if buildInfoOk {
-			data.Version = buildInfo.Main.Version
-		}
-		_ = json.NewEncoder(rw).Encode(&data)
-	})))
+	httpMux.Handle("GET /ping", relaxCORS(telemetry.Ping()))
 
 	httpMux.Handle("/v1/", http.StripPrefix("/v1", relaxCORS(votesRestApi)))
 	httpMux.Handle("/", http.FileServer(http.FS(appFS)))
