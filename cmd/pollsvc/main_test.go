@@ -22,12 +22,9 @@ func TestApiHTTP(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() {
-		_ = exec.Command("killall", "pollsvc").Run()
 		t.Log("shutting down", cmd.Process.Pid)
-		err := cmd.Process.Signal(os.Interrupt)
-		if err != nil {
-			t.Log("failed to send interrupt signal:", err)
-		}
+		// TODO: go run does not propagate Interrupt. Consider compiling anc callng the exe directly.
+		_ = exec.Command("killall", "pollsvc").Run()
 		t.Log("waiting for server shutdown")
 		_, _ = cmd.Process.Wait()
 		t.Log("server exited")

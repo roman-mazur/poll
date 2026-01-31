@@ -53,15 +53,7 @@ Possible flags are below.
 
 	serverClosedCh := make(chan error)
 
-	teardownCtx, cancelFunc := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancelFunc()
-	defer func() {
-		err := telemetry.Shutdown(teardownCtx)
-		if err != nil {
-			log.Println("Error shutting down telemetry:", err)
-		}
-		log.Println("Shutdown complete")
-	}()
+	defer callShutdown("telemetry", telemetry.Shutdown)
 
 	initReady := make(chan struct{})
 	go func() {
@@ -81,9 +73,18 @@ Possible flags are below.
 	select {
 	case <-shutdownCh:
 		log.Println("Shutdown requested")
-		_ = server.Close()
+		callShutdown("http", server.Shutdown)
 	case <-serverClosedCh:
 	}
+}
+
+func callShutdown(name string, f func(context.Context) error) {
+	teardownCtx, cancelFunc := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelFunc()
+	if err := f(teardownCtx); err != nil {
+		log.Printf("Error shutting down %s: %s", name, err)
+	}
+	log.Printf("%s shutdown complete", name)
 }
 
 func shutdownSignal() chan os.Signal {
