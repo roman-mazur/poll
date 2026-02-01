@@ -6,11 +6,13 @@ import (
 	"rmazur.io/poll-defs/infra/monitoring"
 )
 
+dcRegion: cloudRegion.#Name
+
 pollSvc: {
 	version:      "v0.0.10"
 	arch:         selectedInstanceType.info.ProcessorInfo.SupportedArchitectures[0]
 	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-\(arch)-linux"
-	memReq:       model.summary.memory
+	memReq:       model.summary.memoryMB
 
 	installPath: "/usr/bin/pollsvc"
 	certPath:    "/opt/pollsvc"

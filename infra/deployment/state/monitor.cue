@@ -11,9 +11,8 @@ checks: {
 		#addr: deployData.full_address.value
 	}
 
-	memory: monitoring.#InstanceMemoryCheck & {
-		#region:   deployment.awsRegion
-		#hostname: deployData.poll_server_host_name.value
+	memory: monitoring.#ServiceMemoryCheck & {
+		#region: deployment.dcRegion
 	}
 }
 
@@ -21,6 +20,7 @@ checks: {
 outputs: live: version: deployment.pollSvc.version
 
 // Actual memory usage should be less than predicted by the model.
-outputs: memory: Datapoints: [...{
-	Maximum: <=(model.summary.memory / deployment.selectedInstanceType.info.MemoryInfo.SizeInMiB * 100)
+outputs: memory: MetricDataResults: [{
+	#v: <=(model.summary.memoryMB * 1024 * 1024)
+	Values: [#v, ...#v]
 }]

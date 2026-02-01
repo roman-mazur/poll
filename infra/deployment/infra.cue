@@ -8,8 +8,6 @@ import (
 	"rmazur.io/poll-defs/infra/monitoring"
 )
 
-awsRegion: "eu-central-1"
-
 terraform: {
 	aws.#Terraform
 	cloudflare.#Terraform
@@ -19,7 +17,7 @@ terraform: {
 		cloudflare: _
 	}
 
-	provider: aws: region: awsRegion
+	provider: aws: region: dcRegion
 
 	#EC2Permissions & {#serverName: "poll_server"}
 
@@ -52,6 +50,7 @@ terraform: {
 
 		echo "poll svc started" >> /opt/init.log
 
+		export ADOT_ARCH=\(pollSvc.arch)
 		\(monitoring.adot.setupScript)
 		echo "ADOT installed" >> /opt/init.log
 
