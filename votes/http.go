@@ -21,15 +21,16 @@ func HTTPHandler(repo *Repository) http.Handler {
 
 	mux.Handle("GET /talk-data/{talk_id}", adapt(func(r *http.Request) (any, error) {
 		return repo.Aggregate(r.PathValue("talk_id")), nil
-	}, dataCounter))
+	}, fetchCounter))
 	return mux
 }
 
+// Metrics.
 var (
 	meter        = telemetry.Meter("votes")
-	voteCounter  = must(meter.Int64Counter("operation.vote"))
-	labelCounter = must(meter.Int64Counter("operation.label"))
-	dataCounter  = must(meter.Int64Counter("operation.aggregate"))
+	voteCounter  = must(meter.Int64Counter("operation.vote_total"))
+	labelCounter = must(meter.Int64Counter("operation.label_total"))
+	fetchCounter = must(meter.Int64Counter("operation.fetch_total"))
 )
 
 func process[T any](f func(T) error) handler {

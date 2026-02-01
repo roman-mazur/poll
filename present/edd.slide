@@ -313,6 +313,10 @@ TODO: rework
 
 .code edd/deploy-examples.cue /memory-check/,/memory-check-end/
 
+## Operation counters
+
+.code ../votes/http.go /Metrics/,/^\)$/
+
 ## Why to code the expectations?
 
 Reason 1: it may help us to maintain/validate the deployment code.

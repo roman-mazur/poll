@@ -12,4 +12,4 @@ else
 fi
 
 # Persist the latest deploy state for monitoring queries.
-terraform output -json | cue import -f -o ../state/terraform.cue -p state -l 'deployData:' json: -
+terraform output -json | cue import -f -o ../state/deploy-outputs.cue -p state -l 'deployData:' json: -

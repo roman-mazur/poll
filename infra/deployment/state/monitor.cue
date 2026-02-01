@@ -14,6 +14,13 @@ checks: {
 	memory: monitoring.#ServiceMemoryCheck & {
 		#region: deployment.dcRegion
 	}
+
+	for name, case in model.useCase {
+		"operation_\(name)": monitoring.#OperationRateCheck & {
+			#region: deployment.dcRegion
+			#name: name
+		}
+	}
 }
 
 // Expect the correct version to be deployed.
@@ -24,3 +31,11 @@ outputs: memory: MetricDataResults: [{
 	#v: <=(model.summary.memoryMB * 1024 * 1024)
 	Values: [#v, ...#v]
 }]
+
+// Validate if our usage model matches actual usage.
+for name, case in model.useCase {
+		outputs: "operation_\(name)": MetricDataResults: [{
+			#v: <=case.CPS & >=(case.CPS/2)
+			Values: [#v, ...#v]
+		}]
+}

@@ -8,14 +8,14 @@ import (
 )
 
 command: check: {
-	for name, command in checks {
+	for name, checkCmd in checks {
 		(name): {
 			log: cli.Print & {text: "Importing data for [\(name)]"}
 
 			// Get the data exposed by monitoring.
 			get: exec.Run & {
 				$after: log
-				cmd: ["bash", "-c", strings.Join(command.cmd, " ")]
+				cmd: ["bash", "-c", strings.Join(checkCmd.cmd, " ")]
 				stdout: string
 			}
 
