@@ -47,6 +47,7 @@ eventDuration: "8h"
 
 useCase: [name=string]: close({
 	submitPeriod:   string & time.Duration
+	submitPeriodMs: time.ParseDuration(submitPeriod) / time.ParseDuration("1ms")
 	concurentUsers: >0 & <=1_000_000
 
 	CPS: concurentUsers / (time.ParseDuration(submitPeriod) / time.ParseDuration("1s"))

@@ -1,0 +1,14 @@
+{
+    "submitPeriod": "20s",
+    "concurentUsers": 1000,
+    "recordSample": {
+        "talk_name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "timestamp": "2022-02-24T03:00:00Z",
+        "voter_id": "b70fc2dc",
+        "value": 10
+    },
+    "recordSize": 164,
+    "submitPeriodMs": 2.0E+4,
+    "CPS": 50,
+    "memory": 236160000
+}

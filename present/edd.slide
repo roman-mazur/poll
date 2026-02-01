@@ -269,7 +269,7 @@ Changing the vote frequency allowed to the audience:
 
 .code edd/use-case-examples.cue /vote-use-case-modified/,/vote-use-case-modified-end/
 
-## Don't forget to vote
+## Remember to vote
 
 .image edd/voter-ui.jpg 550 _
 

@@ -5,6 +5,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <script type="module" src="config.js?v=2"></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
   <style lang="css">
     .the-end {
@@ -94,7 +96,8 @@
       };
     }
 
-    const minPeriod = 10000;
+    const submitDuration = window.voteSubmitPeriodMs;
+    const minPeriod = submitDuration / 2;
 
     let timerUpdate = 0;
 
@@ -116,16 +119,14 @@
 
       showQuestion(false);
 
-      const duration = minPeriod*2;
-
       setTimeout(() => {
         console.log("Showing question again.");
         showQuestion(true);
         init(talkId);
-      }, duration);
+      }, submitDuration);
 
       const setTimerText = () => {
-        const timeLeft = Math.max(Math.round((lastSubmit + duration - Date.now())/1000), 0);
+        const timeLeft = Math.max(Math.round((lastSubmit + submitDuration - Date.now())/1000), 0);
         pollElement.getElementsByClassName('timer')[0].innerText = `${timeLeft}`;
       };
 

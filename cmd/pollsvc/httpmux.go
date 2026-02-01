@@ -10,6 +10,8 @@ import (
 	"rmazur.io/poll/internal/telemetry"
 )
 
+//go:generate cue export -e useCase.vote -f -o www/vote-use-case.json ../../infra/model
+
 //go:embed www
 var www embed.FS
 
