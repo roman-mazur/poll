@@ -1,7 +1,7 @@
 package deployment
 
 import (
-	"github.com/roman-mazur/cuetf/aws/regions/eucentral1"
+	cloudRegion "github.com/roman-mazur/cuetf/aws/regions/eucentral1"
 	"rmazur.io/poll-defs/infra/model"
 	"rmazur.io/poll-defs/infra/monitoring"
 )
@@ -41,8 +41,9 @@ instanceFilter: {
 }
 
 selectedInstanceType: {
-	candidates: [for c in eucentral1.InstanceTypes if (c & instanceFilter) != _|_ {c}]
+	candidates: [for c in cloudRegion.InstanceTypes if (c & instanceFilter) != _|_ {c}]
+	candidateNames: [for c in candidates { c.InstanceType }]
 
-	info: candidates[0]
+	info: candidates[len(candidates)-1]
 	name: info.InstanceType
 }
