@@ -18,7 +18,7 @@ checks: {
 	for name, case in model.useCase {
 		"operation_\(name)": monitoring.#OperationRateCheck & {
 			#region: deployment.dcRegion
-			#name: name
+			#name:   name
 		}
 	}
 }
@@ -34,8 +34,8 @@ outputs: memory: MetricDataResults: [{
 
 // Validate if our usage model matches actual usage.
 for name, case in model.useCase {
-		outputs: "operation_\(name)": MetricDataResults: [{
-			#v: <=case.CPS & >=(case.CPS/2)
-			Values: [#v, ...#v]
-		}]
+	outputs: "operation_\(name)": MetricDataResults: [{
+		#v: <=case.CPS & >=(case.CPS / 2)
+		Values: [#v, ...#v]
+	}]
 }

@@ -9,7 +9,7 @@ import (
 dcRegion: cloudRegion.#Name
 
 pollSvc: {
-	version:      "v0.0.10"
+	version:      "v0.0.11"
 	arch:         selectedInstanceType.info.ProcessorInfo.SupportedArchitectures[0]
 	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-\(arch)-linux"
 	memReq:       model.summary.memoryMB
@@ -44,7 +44,7 @@ instanceFilter: {
 
 selectedInstanceType: {
 	candidates: [for c in cloudRegion.InstanceTypes if (c & instanceFilter) != _|_ {c}]
-	candidateNames: [for c in candidates { c.InstanceType }]
+	candidateNames: [for c in candidates {c.InstanceType}]
 
 	info: candidates[len(candidates)-1]
 	name: info.InstanceType

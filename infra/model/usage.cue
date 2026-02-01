@@ -64,5 +64,5 @@ summary: {
 	CPS: >0 & <=60
 	CPS: math.Round(list.Sum([for uc in useCase {uc.CPS}]))
 
-	memoryMB: math.Round(list.Sum([for uc in useCase {uc.memory}])/1024/1024)
+	memoryMB: math.Round(list.Sum([for uc in useCase {uc.memory}]) / 1024 / 1024)
 }
