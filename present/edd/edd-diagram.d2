@@ -1,5 +1,6 @@
 direction: right
 
+model: model\n(expectations)
 model: {
   shape: circle
   near: bottom-left
@@ -25,7 +26,7 @@ model -> deployment: shapes {
     stroke-width: 5
   }
 }
-deployment -> monitoring: exposes\nmodel-related metrics
+deployment -> monitoring: exposes\nexpectations-driven metrics
 monitoring -> model: refines {
   style: {
     stroke-width: 5

@@ -1,12 +1,12 @@
-# How much resources I need?..
-Usage model driven development
+# Expectations Driven Deployments
 
 Roman Mazur
-Project lead, Ubisoft
+Engineering Manager, Ubisoft
 
 roman@rmazur.io
 
 X: @roman_mazur
+GitHub: roman-mazur
 
 ## Introduction
 
@@ -16,7 +16,7 @@ X: @roman_mazur
 
 ## The device
 
-.image umdd/zoom-on-poll.png 500 _
+.image edd/zoom-on-poll.png 500 _
 
 ## Be my guest
 
@@ -29,15 +29,15 @@ X: @roman_mazur
 
 ## What's happening
 
-.image umdd/case-vote.png 600 _
+.image edd/case-vote.png 600 _
 
 .caption poll: Use cases
 
 ## Presenter adds context
-.image umdd/case-annotate.png 600 _
+.image edd/case-annotate.png 600 _
 
 ## Presenter visualizes
-.image umdd/case-fetch.png 600 _
+.image edd/case-fetch.png 600 _
 
 ## Use cases summary
 
@@ -57,7 +57,7 @@ Voting can be done as a REST API call from a web app.
 
 Let's imagine how this call will be used... and declare it in JSON.
 
-.code umdd/use-case-examples.cue /vote-use-case-json/,/vote-use-case-json-end/
+.code edd/use-case-examples.cue /vote-use-case-json/,/vote-use-case-json-end/
 
 : We understand that this can be implemented as a web application.
 : Let's try to reason about the resources needed by this app.
@@ -66,7 +66,7 @@ Let's imagine how this call will be used... and declare it in JSON.
 
 Now dropping some quotes and commas...
 
-.code umdd/use-case-examples.cue /vote-use-case-cue/,/vote-use-case-cue-end/
+.code edd/use-case-examples.cue /vote-use-case-cue/,/vote-use-case-cue-end/
 
 : Feel free to take a moment to Google it. But please come back to our web app.
 
@@ -74,7 +74,7 @@ Now dropping some quotes and commas...
 
  ...help to validate the data we write
 
-.code umdd/use-case-examples.cue /constraints-1/,/constraints-1-end/
+.code edd/use-case-examples.cue /constraints-1/,/constraints-1-end/
 
 If we set concurentUsers: **2_000_000** 
 and run **cue vet**, we get
@@ -89,25 +89,25 @@ useCase.vote.concurentUsers: invalid value 2000000 (out of bound <=1000000):
 
 To validate the period value.
 
-.code umdd/use-case-examples.cue /constraints-2/,/constraints-2-end/
+.code edd/use-case-examples.cue /constraints-2/,/constraints-2-end/
 
 ## And even more
 
 To limit the fields.
 
-.code umdd/use-case-examples.cue /constraints-3/,/constraints-3-end/
+.code edd/use-case-examples.cue /constraints-3/,/constraints-3-end/
 
 ## Back to our use cases
 
 .caption poll: Start deriving CPS
 
-.code umdd/use-case-examples.cue /all-use-cases/,/all-use-cases-end/
+.code edd/use-case-examples.cue /all-use-cases/,/all-use-cases-end/
 
 : What we get is the structured data giving the quantitative characteristics to our use cases. 
 
 ## Derive call per second rate
 
-.code umdd/use-case-examples.cue /call-rate/,/call-rate-end/
+.code edd/use-case-examples.cue /call-rate/,/call-rate-end/
 
 Checking...
 ```
@@ -147,17 +147,17 @@ $ cue get go rmazur.io/poll/votes/structure
 
 ## Adding record samples
 
-.code umdd/use-case-examples.cue /label-sample/,/label-sample-end/
+.code edd/use-case-examples.cue /label-sample/,/label-sample-end/
 
 : We augment the use cases data with the samples of the stored records. 
 
 ## Memory requirement
 
-.code umdd/use-case-examples.cue /memory-requirement/,/memory-requirement-end/
+.code edd/use-case-examples.cue /memory-requirement/,/memory-requirement-end/
 
 ## Let's summarize
 
-.code umdd/use-case-examples.cue /summary/,/summary-end/
+.code edd/use-case-examples.cue /summary/,/summary-end/
 
 **Voilà!**
 
@@ -173,9 +173,9 @@ I could keep everything in RAM...
 
 ## Roman...
 
-.background umdd/classics.jpg
+.background edd/classics.jpg
 
-.html umdd/envelope.html
+.html edd/envelope.html
 
 : We put back-of-envelope calculations in code... But why?
 : I sincerely believe that it can be explained only by showing more code.
@@ -186,55 +186,68 @@ I could keep everything in RAM...
 
 We can take the model data into our Kubernetes manifests.
 
-.code umdd/deploy-examples.cue /k8s-deployment/,/k8s-deployment-end/
+.code edd/deploy-examples.cue /k8s-deployment/,/k8s-deployment-end/
 
 Then `cue export` and pass to `kubectl apply`.
 
 ## Terraform
  ...or set a constraint on the AWS WAF rate limit rule.
 
-.code umdd/deploy-examples.cue /terraform-waf/,/terraform-waf-end/
+.code edd/deploy-examples.cue /terraform-waf/,/terraform-waf-end/
 
 To ensure the Web Application Firewall does not block the expected traffic.
 
-## Why to code the model?
+## Why to code the expectations?
 
 Reason 1: it may help us to **maintain/validate the deployment code.**
 
-.image umdd/umdd-diagram-intro.png 600 _
+.image edd/edd-diagram-intro.png 600 _
 
 .caption poll: EC2 Deployment
 
 ## How is the service you use today deployed?
 
-## AWS instance types info
-Import AWS EC2 instance types info into CUE.
+## Data center instance types info
+Imported & published as a [CUE package]((https://github.com/roman-mazur/cuetf)).
 
-.code umdd/aws-instances-import.txt
+.code edd/aws-instances-import.cue
 
- *examples of such import are also collected in [github.com/roman-mazur/cuetf](https://github.com/roman-mazur/cuetf)
+```
+> cue export
+
+allInstanceTypes: [{
+	InstanceType:      "m6gd.4xlarge"
+	CurrentGeneration: true
+	FreeTierEligible:  false
+	MemoryInfo: SizeInMiB: 65536
+  ...
+}]
+```
 
 ## Selecting a suitable type
 
-.code umdd/deploy-examples.cue /instance-filter/,/instance-filter-end/
+.code edd/deploy-examples.cue /instance-filter/,/instance-filter-end/
 
 Which gives us
 ```
 [
-  "t4g.nano", "t2.micro", "t3.micro", "t3.nano", 
-  "t4g.micro", "t3a.nano", "t2.nano", "t3a.micro"
+    "t2.micro", "t2.nano", "t3.micro", "t3.nano",
+    "t3a.micro", "t3a.nano", "t4g.micro", "t4g.nano"
 ]
 ```
 
 ## Confirming the free tier
 
-.code umdd/deploy-examples.cue /free-tier/,/free-tier/
+.code edd/deploy-examples.cue /free-tier/,/free-tier/
 
-Which gives us `t2.micro`
+Which gives us 
+```
+["t3.micro", "t4g.micro"]
+```
 
 ## Final deployment
 
-.code umdd/deploy-examples.cue /final/,/final-end/
+.code edd/deploy-examples.cue /final/,/final-end/
 
 ## Adjusting the vote use case
 
@@ -242,7 +255,7 @@ Original CPS: 202.
 
 But we worry about our t2.micro instance...
 
-.code umdd/use-case-examples.cue /summary-limited-cps/,/summary-limited-cps-end/
+.code edd/use-case-examples.cue /summary-limited-cps/,/summary-limited-cps-end/
 
 ```
 summary.CPS: invalid value 202 (out of bound <=60):
@@ -254,38 +267,53 @@ summary.CPS: invalid value 202 (out of bound <=60):
 
 Changing the vote frequency allowed to the audience:
 
-.code umdd/use-case-examples.cue /vote-use-case-modified/,/vote-use-case-modified-end/
+.code edd/use-case-examples.cue /vote-use-case-modified/,/vote-use-case-modified-end/
 
 ## Don't forget to vote
 
-.image umdd/voter-ui.jpg 550 _
+.image edd/voter-ui.jpg 550 _
+
+## We shaped our deployment
+
+.image edd/edd-diagram-intro.png 450 _
+
+More examples?..
+
+## OpenSearch disks size
+
+TODO
+
+## Postgres partition size?
+
+TODO
 
 ## How about observability?
 
 Deployment is good. But we also need to monitor the live system.
 
-.image umdd/umdd-diagram-monitoring.png 550 _
+.image edd/edd-diagram-monitoring.png 550 _
 
-## Usage model driven development
+## Expectations Driven Deployment
 
-.caption poll: UMDD concept
+.caption poll: EDD concept
 
-.image umdd/umdd-diagram.png 550 _
+.image edd/edd-diagram.png 550 _
 
 ## Refinement: memory usage confirmation
 
 .caption poll: Refinement
 
-.code umdd/deploy-examples.cue /memory-stats/,/memory-stats-end/
-.code umdd/deploy-examples.cue /memory-output/,/memory-output-end/
+TODO: rework
+.code edd/deploy-examples.cue /memory-stats/,/memory-stats-end/
+.code edd/deploy-examples.cue /memory-output/,/memory-output-end/
 
 ## Refinement: constraints on the memory stats
 
  ... help us understand if the real system behaviour still matches our model 
 
-.code umdd/deploy-examples.cue /memory-check/,/memory-check-end/
+.code edd/deploy-examples.cue /memory-check/,/memory-check-end/
 
-## Why to code the model?
+## Why to code the expectations?
 
 Reason 1: it may help us to maintain/validate the deployment code.
 
@@ -295,10 +323,9 @@ Reason 2: it gives us a formal way **to confirm if the design matches the real w
 
 .caption poll: Conclusions
 
-- Usage model driven development
-- CUE may help, but it's not the only way
-- Should be perfect for CDKs
+- Expectations Driven Deployment is an approach & a mindset
+- CUE may help a lot (thanks for those constraints unification!), but it's not the only way
 
-.image umdd/umdd-diagram.png 350 _
+.image edd/edd-diagram.png 350 _
 
 - Code on GitHub: [github.com/roman-mazur/poll](github.com/roman-mazur/poll)

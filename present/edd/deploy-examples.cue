@@ -28,21 +28,21 @@ terraform: aws_waf_rate_based_rule: poll_svc_rate_limits: {
 // terraform-waf-end OMIT
 
 // instance-filter OMIT
-instanceFilter: {
+filter: {
 	CurrentGeneration: true
 	MemoryInfo: SizeInMiB: >model.summary.memory & <=(model.summary.memory * 2) // HL
 }
 
-selectedInstanceType: { // HL
-	candidates: [for c in eucentral1.InstanceTypes if (c & instanceFilter) != _|_ {c}]
+selectedInstanceType: {
+	candidates: [for c in cloudRegion.InstanceTypes if (c & filter) != _|_ {c}] // HL
 
-	info: candidates[0]
+	info: candidates[len(candidates)-1]
 	name: info.InstanceType
 }
 // instance-filter-end OMIT
 
 // free-tier OMIT
-instanceFilter: {
+filter: {
 	CurrentGeneration: true
 	FreeTierEligible:  true // HL
 	MemoryInfo: SizeInMiB: >model.summary.memory & <=(model.summary.memory * 2)
@@ -56,16 +56,17 @@ resource: aws_instance: poll_server: {
 }
 
 data: aws_ami: poll_server_ami: {
-	most_recent: true
-
 	filter: [
 		{name: "name", values: ["al2023-ami-2023*"]},
 		{
 			name: "virtualization-type"
 			values: selectedInstanceType.info.SupportedVirtualizationTypes
 		},
+		{
+			name: "architecture",
+			values: selectedInstanceType.info.ProcessorInfo.SupportedArchitectures
+		},
 	]
-	owners: ["amazon"]
 }
 // final-end OMIT
 
