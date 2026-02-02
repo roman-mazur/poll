@@ -190,10 +190,10 @@ We can take the model data into our Kubernetes manifests.
 
 Then `cue export` and pass to `kubectl apply`.
 
-## Terraform
+## Other Infrastructure Code
  ...or set a constraint on the AWS WAF rate limit rule.
 
-.code edd/deploy-examples.cue /terraform-waf/,/terraform-waf-end/
+.code edd/deploy-examples.cue /opentofu-waf/,/opentofu-waf-end/
 
 To ensure the Web Application Firewall does not block the expected traffic.
 
@@ -202,8 +202,6 @@ To ensure the Web Application Firewall does not block the expected traffic.
 Reason 1: it may help us to **maintain/validate the deployment code.**
 
 .image edd/edd-diagram-intro.png 600 _
-
-.caption poll: EC2 Deployment
 
 ## How is the service you use today deployed?
 
@@ -223,6 +221,8 @@ allInstanceTypes: [{
   ...
 }]
 ```
+
+.caption poll: Actual Deployment
 
 ## Selecting a suitable type
 
@@ -253,7 +253,7 @@ Which gives us
 
 Original CPS: 202. 
 
-But we worry about our t2.micro instance...
+But we worry about our micro instance...
 
 .code edd/use-case-examples.cue /summary-limited-cps/,/summary-limited-cps-end/
 
@@ -275,17 +275,7 @@ Changing the vote frequency allowed to the audience:
 
 ## We shaped our deployment
 
-.image edd/edd-diagram-intro.png 450 _
-
-More examples?..
-
-## OpenSearch disks size
-
-TODO
-
-## Postgres partition size?
-
-TODO
+.image edd/edd-diagram-intro.png 550 _
 
 ## How about observability?
 
@@ -293,39 +283,57 @@ Deployment is good. But we also need to monitor the live system.
 
 .image edd/edd-diagram-monitoring.png 550 _
 
+## Reality-check: memory usage
+
+.caption poll: Observability
+
+To confirm our memory usage is in the expected bounds.
+
+.code edd/deploy-examples.cue /memory-check/,/memory-check-end/
+
 ## Expectations Driven Deployment
 
 .caption poll: EDD concept
 
 .image edd/edd-diagram.png 550 _
 
-## Refinement: memory usage confirmation
+## Confirming usage model
 
-.caption poll: Refinement
+Our application is instrumented to report on key transactions...
 
-TODO: rework
-.code edd/deploy-examples.cue /memory-stats/,/memory-stats-end/
-.code edd/deploy-examples.cue /memory-output/,/memory-output-end/
+.code ../votes/http.go /Application metrics/,/^\)$/
 
-## Refinement: constraints on the memory stats
+ ...incrementing a corresponding counter.
 
- ... help us understand if the real system behaviour still matches our model 
+.code ../votes/http.go /func.+ResponseWriter.+Request/,/counter\.Add/
 
-.code edd/deploy-examples.cue /memory-check/,/memory-check-end/
+## Reality-check: transactions rate
 
-## Operation counters
+To confirm the actual usage matches our expectations.
 
-.code ../votes/http.go /Metrics/,/^\)$/
+.code edd/deploy-examples.cue /operations-check/,/operations-check-end/
+
+Live Demo...
+
+.caption poll: Demo
 
 ## Why to code the expectations?
+
+.caption poll: Conclusions
 
 Reason 1: it may help us to maintain/validate the deployment code.
 
 Reason 2: it gives us a formal way **to confirm if the design matches the real world.**
 
-## What was the talk about?
+## Storage-related configuration
 
-.caption poll: Conclusions
+TODO
+
+## Load test preparation
+
+TODO
+
+## What was the talk about?
 
 - Expectations Driven Deployment is an approach & a mindset
 - CUE may help a lot (thanks for those constraints unification!), but it's not the only way

@@ -12,25 +12,25 @@ k8s: deployment: {
 				name:  "pollsvc"
 				image: "some-registry.io/pollsvc:0.1.0"
 
-				resources: limits: memory: "\(model.summary.memory)Mi" // HL
+				resources: limits: memory: "\(model.summary.memoryMB)Mi" // HL
 			}]
 		}
 	}
 }
 // k8s-deployment-end OMIT
 
-// terraform-waf OMIT
-terraform: aws_waf_rate_based_rule: poll_svc_rate_limits: {
+// opentofu-waf OMIT
+opentofu: aws_waf_rate_based_rule: poll_svc_rate_limits: {
 	name:       "poll_svc_rate_limits"
 	rate_key:   "IP"
 	rate_limit: >=(model.summary.CPS * 300) // Per 5 minutes. // HL
 }
-// terraform-waf-end OMIT
+// opentofu-waf-end OMIT
 
 // instance-filter OMIT
 filter: {
 	CurrentGeneration: true
-	MemoryInfo: SizeInMiB: >model.summary.memory & <=(model.summary.memory * 2) // HL
+	MemoryInfo: SizeInMiB: >model.summary.memoryMB & <=(model.summary.memoryMB * 2) // HL
 }
 
 selectedInstanceType: {
@@ -45,7 +45,7 @@ selectedInstanceType: {
 filter: {
 	CurrentGeneration: true
 	FreeTierEligible:  true // HL
-	MemoryInfo: SizeInMiB: >model.summary.memory & <=(model.summary.memory * 2)
+	MemoryInfo: SizeInMiB: >model.summary.memoryMB & <=(model.summary.memoryMB * 2)
 }
 // free-tier-end OMIT
 
@@ -70,42 +70,20 @@ data: aws_ami: poll_server_ami: {
 }
 // final-end OMIT
 
-memoryMetricCode: """
-memory-stats, OMIT
-aws cloudwatch get-metric-statistics --metric-name=mem_used_percent \ // HL
-		--namespace=CWAgent \
-		--statistics=Maximum --dimensions Name=host,Value=$hostname \
-		--start-time "2024-10-14T08:00:00" --end-time "2024-10-14T20:00:00"
-memory-stats-end, OMIT
-"""
-
-// memory-output OMIT
-outputs: memory: {
-	Label: "mem_used_percent"
-	Datapoints: [{
-		Timestamp: "2024-10-14T18:24:00+00:00"
-		Maximum:   19.663855173832545 // HL
-		Unit:      "Percent"
-	}, {
-		Timestamp: "2024-10-14T19:24:00+00:00"
-		Maximum:   19.637523143386133
-		Unit:      "Percent"
-	}]
-}
-// memory-output-end OMIT
-
 // memory-check OMIT
-import (
-	"rmazur.io/poll-defs/infra/deployment"
-	"rmazur.io/poll-defs/infra/model"
-)
+// PromQL queries to perform to verify the system.
+promQuery: [name=string]: string
+promQuery: memory: "max(go.memory.used)"
 
-// Actual memory usage should be less than predicted by the model.
-outputs: memory: Datapoints: [...{
-
-	#instanceMem: deployment.selectedInstanceType.info.MemoryInfo.SizeInMiB
-	#modelMax: model.summary.memory / #instanceMem  * 100
-
-	Maximum: <= #modelMax // HL
-}]
+// Prometheus query results.
+output: [name=string]: _
+output: memory: values: [...<=model.summary.memoryMB*1024*1024]
 // memory-check-end OMIT
+
+// operations-check OMIT
+for name, case in model.useCase {
+	promQuery: "operation_\(name)": "rate(operation.\(name)_total[5m])"
+
+	output: "operation_\(name)": values: [...<=case.CPS] // HL
+}
+// operations-check-end OMIT

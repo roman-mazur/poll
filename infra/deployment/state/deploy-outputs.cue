@@ -9,6 +9,6 @@ deployData: {
 	poll_server_host_name: {
 		sensitive: false
 		type:      "string"
-		value:     "ip-172-31-21-171.eu-central-1.compute.internal"
+		value:     "ip-172-31-31-163.eu-central-1.compute.internal"
 	}
 }

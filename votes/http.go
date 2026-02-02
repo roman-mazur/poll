@@ -1,7 +1,6 @@
 package votes
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -25,7 +24,7 @@ func HTTPHandler(repo *Repository) http.Handler {
 	return mux
 }
 
-// Metrics.
+// Application metrics.
 var (
 	meter        = telemetry.Meter("votes")
 	voteCounter  = must(meter.Int64Counter("operation.vote_total"))
@@ -58,7 +57,7 @@ type handler func(*http.Request) (any, error)
 
 func adapt(f handler, counter metric.Int64Counter) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		counter.Add(context.Background(), 1)
+		counter.Add(r.Context(), 1)
 
 		data, err := f(r)
 		rw.Header().Add("content-type", "application/json")

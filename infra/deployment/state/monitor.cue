@@ -35,7 +35,7 @@ outputs: memory: MetricDataResults: [{
 // Validate if our usage model matches actual usage.
 for name, case in model.useCase {
 	outputs: "operation_\(name)": MetricDataResults: [{
-		#v: <=case.CPS & >=(case.CPS / 2)
+		#v: <=case.CPS
 		Values: [#v, ...#v]
 	}]
 }

@@ -9,7 +9,7 @@ import (
 dcRegion: cloudRegion.#Name
 
 pollSvc: {
-	version:      "v0.0.11"
+	version:      "v0.0.12"
 	arch:         selectedInstanceType.info.ProcessorInfo.SupportedArchitectures[0]
 	downloadLink: "https://github.com/roman-mazur/poll/releases/download/\(version)/pollsvc-\(arch)-linux"
 	memReq:       model.summary.memoryMB

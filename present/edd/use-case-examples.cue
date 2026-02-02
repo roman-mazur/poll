@@ -107,7 +107,7 @@ useCase: [name=string]: close({
 summary: {
 	CPS: math.Round(list.Sum([for uc in useCase { uc.CPS }]))
 
-	memory: math.Round(list.Sum([for uc in useCase { uc.memory }]) / 1024 / 1024)
+	memoryMB: math.Round(list.Sum([for uc in useCase { uc.memory }]) / 1024 / 1024)
 }
 // summary-end OMIT
 
