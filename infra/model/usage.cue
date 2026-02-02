@@ -27,7 +27,7 @@ useCase: {
 
 	annotate: {
 		submitPeriod:   "2m"
-		concurentUsers: 10
+		concurentUsers: fetch.concurentUsers
 
 		recordSample: structure.#Label & {
 			talk_name: _talkNameSample
@@ -38,7 +38,7 @@ useCase: {
 
 	fetch: {
 		submitPeriod:   "5s"
-		concurentUsers: annotate.concurentUsers
+		concurentUsers: 10
 		recordSample:   null
 	}
 }
