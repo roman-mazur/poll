@@ -7,7 +7,7 @@ import "time"
 	"useCase": {
 		"vote": {
 			"submitRate": "5s"
-			"usersCount": 1000
+			"concurentUsers": 1000
 		}
 	}
 }
@@ -16,7 +16,7 @@ import "time"
 // vote-use-case-cue OMIT
 useCase: vote: {
 	submitRate: "5s"
-	usersCount: 1000
+	concurentUsers: 1000
 }
 // vote-use-case-cue-end OMIT
 
