@@ -65,6 +65,17 @@
     const deadline = Date.now() + 1000*60*60;
 
     let initTicker = 0;
+    let lastSubmit = 0;
+
+    function readLastSubmit() {
+      const lastSubmitStr = window.localStorage.getItem("lastSubmit");
+      return lastSubmitStr ? parseInt(lastSubmitStr) : 0;
+    }
+
+    function updateLastSubmit() {
+      lastSubmit = Date.now();
+      window.localStorage.setItem("lastSubmit", lastSubmit.toString());
+    }
 
     function init(talkId) {
       if (!talkId || Date.now() >= deadline) {
@@ -96,12 +107,10 @@
       };
     }
 
-    const submitDuration = window.voteSubmitPeriodMs;
-    const minPeriod = submitDuration / 2;
-
     let timerUpdate = 0;
 
     function showFeedback(talkId) {
+      const submitDuration = window.voteSubmitPeriodMs;
       console.log("Vote submitted. Showing feedback.");
 
       const pollElement = document.getElementById('poll');
@@ -119,11 +128,15 @@
 
       showQuestion(false);
 
+      let leftTime = submitDuration - Date.now() + lastSubmit;
+      if (leftTime < 0) {
+        leftTime = submitDuration;
+      }
       setTimeout(() => {
         console.log("Showing question again.");
         showQuestion(true);
         init(talkId);
-      }, submitDuration);
+      }, leftTime);
 
       const setTimerText = () => {
         const timeLeft = Math.max(Math.round((lastSubmit + submitDuration - Date.now())/1000), 0);
@@ -134,10 +147,9 @@
       timerUpdate = setInterval(setTimerText, 1000);
     }
 
-    let lastSubmit = 0;
-
     async function submitChoice(talk, val) {
-      if (Date.now() - lastSubmit < minPeriod) {
+      const minPeriod = window.voteSubmitPeriodMs / 2;
+      if (Date.now() - readLastSubmit() < minPeriod) {
         return;
       }
 
@@ -150,12 +162,12 @@
         })
       });
 
-      lastSubmit = Date.now();
+      updateLastSubmit();
       return await resp.json();
     }
 
     async function currentTalkId() {
-      const inputId = (new URLSearchParams(window.location.search)).get('id').trim();
+      const inputId = (new URLSearchParams(window.location.search)).get('id')?.trim();
       let configId = (await (await fetch('/config/current')).text());
       if (configId) {
         configId = configId.trim();
@@ -177,15 +189,23 @@
       return res;
     }
 
-    currentTalkId().then(id => {
-      const reInit = () => init(id);
+    document.addEventListener('DOMContentLoaded', () => {
+      currentTalkId().then(id => {
+        const reInit = () => init(id);
 
-      reInit();
-      document.getElementById('talk-title').innerText = currentTalkName();
+        reInit();
+        document.getElementById('talk-title').innerText = currentTalkName();
 
-      if (id) {
-        initTicker = window.setInterval(reInit, 1000*60);
-      }
+        if (id) {
+          initTicker = window.setInterval(reInit, 1000*60);
+
+          const submitDuration = window.voteSubmitPeriodMs;
+          lastSubmit = readLastSubmit();
+          if ((Date.now() - lastSubmit) < submitDuration) {
+            showFeedback(id);
+          }
+        }
+      });
     });
 
   </script>
