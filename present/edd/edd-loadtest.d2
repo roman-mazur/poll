@@ -1,0 +1,30 @@
+direction: right
+
+expectations: {
+    ds1: spike duration
+    ds2: spike amplitude
+    ds3: normal replicas count
+}
+
+compose: shape
+compose: {
+    shape: circle
+}
+
+out1: max replicas count
+
+expectations -> compose
+
+compose -> out1
+
+capture: {
+    shape: circle
+}
+
+out1->capture
+
+metric1: actual\nnumber of replicas
+
+capture->metric1
+
+metric1 -> expectations

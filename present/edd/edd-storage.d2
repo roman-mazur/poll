@@ -1,0 +1,20 @@
+direction: right
+
+expectations: {
+    ds1: expected writes rate
+    ds2: record structure
+    ds3: retention period
+}
+
+compose: " "
+compose: {
+    shape: circle
+}
+
+out1: data node\ndisk size
+
+expectations.ds1 -> compose
+expectations.ds2 -> compose
+expectations.ds3 -> compose
+
+compose -> out1

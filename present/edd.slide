@@ -327,11 +327,13 @@ Reason 2: it gives us a formal way **to confirm if the design matches the real w
 
 ## Storage-related configuration
 
-TODO
+Configuring OpenSearch cluster..
+.
+.image edd/edd-storage.png 550 _
 
 ## Load test preparation
 
-TODO
+.image edd/edd-loadtest.png _ 1200
 
 ## What was the talk about?
 
