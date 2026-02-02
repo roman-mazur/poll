@@ -42,7 +42,7 @@ what can validate (confirm or prove wrong) our expectations.
 Finally, with the data obtained from the live system, our original model can be refined, leading to
 an update in the deployment.
 
-![diagram](present/umdd/umdd-diagram.png)
+![diagram](present/edd/edd-diagram.png)
 
 
 ### Presentation video:
