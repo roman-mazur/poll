@@ -7,14 +7,17 @@ import (
 )
 
 checks: {
+	// Is /ping responding?
 	live: monitoring.#ServerLivenessCheck & {
 		#addr: deployData.full_address.value
 	}
 
+	// App memory usage.
 	memory: monitoring.#ServiceMemoryCheck & {
 		#region: deployment.dcRegion
 	}
 
+	// Operation counters.
 	for name, case in model.useCase {
 		"operation_\(name)": monitoring.#OperationRateCheck & {
 			#region: deployment.dcRegion

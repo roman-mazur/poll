@@ -16,31 +16,31 @@ import (
 
 // A template for a command that checks poll service memory usage.
 #ServiceMemoryCheck: _awsMetricsCheck & {
-	#since:    "2H"
+	#since: "2H"
 	#query: [#sqlMetricQuery & {#sql: #"SELECT MAX("go.memory.used") FROM SCHEMA(pollsvc, OTelLib)"#}]
 }
 
 // A template for a command that checks the actual call rate for the defined operation or scenario.
 #OperationRateCheck: _awsMetricsCheck & {
-	#since:    "2H"
-	#name:     string
+	#since: "2H"
+	#name:  string
 	#query: [
 		#sqlMetricQuery & {
-			#sql: #"SELECT MAX("operation.\#(#name)_total") FROM SCHEMA(pollsvc, OTelLib)"#
+			#sql:       #"SELECT MAX("operation.\#(#name)_total") FROM SCHEMA(pollsvc, OTelLib)"#
 			ReturnData: false
 		},
 		{
-			Id: "e1",
-      Expression: "RATE(q1)",
-      Label: "CallsPerSecond",
-      ReturnData: true
-    }
+			Id:         "e1"
+			Expression: "RATE(q1)"
+			Label:      "CallsPerSecond"
+			ReturnData: true
+		},
 	]
 }
 
 _awsMetricsCheck: {
-	#region:   string
-	#since:    string
+	#region: string
+	#since:  string
 	#query: [...]
 
 	cmd: [

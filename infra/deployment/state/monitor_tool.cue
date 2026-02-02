@@ -25,11 +25,16 @@ command: check: {
 				stdin: get.stdout
 			}
 		}
+	}
 
-		// Validate the expectations using cue vet.
-		validate: exec.Run & {
-			$after: [for name, _ in checks {check[name]["import"]}]
-			cmd: ["cue", "vet", "-c"]
-		}
+	separateOutput: cli.Print & {
+		$after: [for name, _ in checks {check[name]["import"]}]
+		text: "\n"
+	}
+
+	// Validate the expectations using cue vet.
+	validate: exec.Run & {
+		$afrer: separateOutput
+		cmd: ["cue", "vet", "-c"]
 	}
 }
