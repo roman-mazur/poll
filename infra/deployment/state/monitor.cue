@@ -1,6 +1,8 @@
 package state
 
 import (
+	"list"
+
 	"rmazur.io/poll-defs/infra/deployment"
 	"rmazur.io/poll-defs/infra/model"
 	"rmazur.io/poll-defs/infra/monitoring"
@@ -39,6 +41,6 @@ outputs: memory: MetricDataResults: [{
 for name, case in model.useCase {
 	outputs: "operation_\(name)": {
 		#v: <=case.CPS
-		MetricDataResults: [{Values: [#v, ...#v]}]
+		MetricDataResults: [{Values: [...#v] & list.MinItems(1)}]
 	}
 }
