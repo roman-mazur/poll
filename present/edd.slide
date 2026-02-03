@@ -5,7 +5,6 @@ Engineering Manager, Ubisoft
 
 roman@rmazur.io
 
-X: @roman_mazur
 GitHub: roman-mazur
 
 ## Introduction
@@ -76,11 +75,11 @@ Now dropping some quotes and commas...
 
 .code edd/use-case-examples.cue /constraints-1/,/constraints-1-end/
 
-If we set concurentUsers: **2_000_000** 
+If we set `concurentUsers:` **10_000** 
 and run **cue vet**, we get
 
 ```
-useCase.vote.concurentUsers: invalid value 2000000 (out of bound <=1000000):
+useCase.vote.concurentUsers: invalid value 10000 (out of bound <=5000):
     ./usage.cue:14:23
     ./usage.cue:9:18
 ```
@@ -191,7 +190,7 @@ We can take the model data into our Kubernetes manifests.
 Then `cue export` and pass to `kubectl apply`.
 
 ## Other Infrastructure Code
- ...or set a constraint on the AWS WAF rate limit rule.
+ ...or set a constraint on the WAF rate limit rule.
 
 .code edd/deploy-examples.cue /opentofu-waf/,/opentofu-waf-end/
 
@@ -275,13 +274,13 @@ Changing the vote frequency allowed to the audience:
 
 ## We shaped our deployment
 
-.image edd/edd-diagram-intro.png 550 _
+.image edd/edd-diagram-intro.png?1 550 _
 
 ## How about observability?
 
 Deployment is good. But we also need to monitor the live system.
 
-.image edd/edd-diagram-monitoring.png 550 _
+.image edd/edd-diagram-monitoring.png?1 550 _
 
 ## Reality-check: memory usage
 
@@ -295,7 +294,7 @@ To confirm our memory usage is in the expected bounds.
 
 .caption poll: EDD concept
 
-.image edd/edd-diagram.png 550 _
+.image edd/edd-diagram.png?1 650 _
 
 ## Confirming usage model
 
@@ -333,7 +332,7 @@ Configuring OpenSearch cluster..
 
 ## Load test preparation
 
-.image edd/edd-loadtest.png _ 1200
+.image edd/edd-loadtest.png 650 _
 
 ## What was the talk about?
 

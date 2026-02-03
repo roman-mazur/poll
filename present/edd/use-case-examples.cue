@@ -26,7 +26,7 @@ useCase: vote: {
 
 useCase: [name=string]: {
 	submitPeriod:   string
-	concurentUsers: >0 & <=1_000_000 // HL
+	concurentUsers: >0 & <=5000 // HL
 }
 // constraints-1-end OMIT
 
@@ -35,14 +35,14 @@ useCase: [name=string]: {
 
 useCase: [name=string]: {
 	submitPeriod:   string & time.Duration // HL
-	concurentUsers: >0 & <=1_000_000
+	concurentUsers: >0 & <=5000
 }
 // constraints-2-end OMIT
 
 // constraints-3 OMIT
 useCase: [name=string]: close({ // HL
 	submitPeriod:   string & time.Duration
-	concurentUsers: >0 & <=1_000_000
+	concurentUsers: >0 & <=5000
 })
 // constraints-3-end OMIT
 
@@ -63,14 +63,14 @@ useCase: {
 }
 useCase: [name=string]: close({
 	submitPeriod:   string & time.Duration
-	concurentUsers: >0 & <=1_000_000
+	concurentUsers: >0 & <=5000
 })
 // all-use-cases-end OMIT
 
 // call-rate OMIT
 useCase: [name=string]: close({
 	submitPeriod:   string & time.Duration
-	concurentUsers: >0 & <=1_000_000
+	concurentUsers: >0 & <=5000
 
 	CPS: concurentUsers / (time.ParseDuration(submitPeriod) / time.ParseDuration("1s")) // HL
 })

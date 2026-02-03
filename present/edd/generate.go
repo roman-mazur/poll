@@ -1,3 +1,3 @@
 package edd
 
-//go:generate go run ./tools diagram
+//go:generate go run ./tools diagram . loadtest
