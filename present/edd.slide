@@ -326,9 +326,11 @@ Reason 2: it gives us a formal way **to confirm if the design matches the real w
 
 ## Storage-related configuration
 
-Configuring OpenSearch cluster..
-.
+Configuring OpenSearch cluster...
+
 .image edd/edd-storage.png 550 _
+
+// When a new index is added, we get via the size approximation.
 
 ## Load test preparation
 
@@ -336,8 +338,8 @@ Configuring OpenSearch cluster..
 
 ## What was the talk about?
 
-- Expectations Driven Deployment is an approach & a mindset
-- CUE may help a lot (thanks for those constraints unification!), but it's not the only way
+- Expectations Driven Deployment is an approach and a mindset
+- CUE may help a lot (thanks to the constraints unification!), but it's not the only way
 
 .image edd/edd-diagram.png 350 _
 

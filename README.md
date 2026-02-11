@@ -46,4 +46,5 @@ an update in the deployment.
 
 
 ### Presentation video:
-[![YT link](http://img.youtube.com/vi/IQ7l7AR0V5Y/0.jpg)](http://www.youtube.com/watch?v=IQ7l7AR0V5Y)
+Config Management Camp 2026
+[![YT link](http://img.youtube.com/vi/DBxkVVrN0mA/0.jpg)](https://www.youtube.com/watch?v=DBxkVVrN0mA&t=15625s)

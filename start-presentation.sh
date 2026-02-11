@@ -26,6 +26,7 @@ echo "Poll link: $link"
 echo
 echo
 
-qrencode -o present/poll/qr.png "$link"
+qrencode -o present/poll/qr.png "$link" || echo "ERROR: check if qrencode is installed"
 
+go install golang.org/x/tools/cmd/present
 cd present && present --base=.
